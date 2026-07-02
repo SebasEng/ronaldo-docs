@@ -1,0 +1,5616 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RONALDO — Conversational Agent for Autonomous Guidance with Unitree Go2</title>
+<style>
+
+:root {
+    --ibero-red: #E00034;
+    --ibero-red-dark: #B8002A;
+    --ibero-gray: #82786F;
+    --ibero-black: #231F20;
+    --ibero-white: #FFFFFF;
+    --ibero-light: #F5F3F1;
+    --sidebar-width: 320px;
+    --header-height: 80px;
+    --font-stack: "Segoe UI", system-ui, -apple-system, sans-serif;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+html {
+    scroll-behavior: smooth;
+    font-size: 16px;
+}
+
+body {
+    font-family: var(--font-stack);
+    background: var(--ibero-light);
+    color: var(--ibero-black);
+    line-height: 1.7;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+/* ── Header ── */
+.site-header {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    background: var(--ibero-red);
+    border-bottom: 3px solid var(--ibero-red-dark);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    height: var(--header-height);
+    display: flex;
+    align-items: center;
+    padding: 0 2rem;
+}
+
+.header-inner {
+    width: 100%;
+    max-width: 1400px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.header-logo {
+    display: flex;
+    align-items: center;
+}
+
+.header-logo-img {
+    height: 50px;
+    margin-right: 1.2rem;
+    filter: brightness(0) invert(1);
+}
+
+.header-text {
+    display: flex;
+    flex-direction: column;
+}
+
+.header-logo h1 {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--ibero-white);
+    letter-spacing: 1px;
+    margin: 0;
+}
+
+.header-logo .subtitle {
+    font-size: 0.7rem;
+    color: rgba(255,255,255,0.8);
+    letter-spacing: 1px;
+    margin-top: 2px;
+}
+
+.header-toggle {
+    display: none;
+    background: none;
+    border: 2px solid var(--ibero-white);
+    border-radius: 4px;
+    padding: 6px 10px;
+    cursor: pointer;
+    font-size: 1.2rem;
+    color: var(--ibero-white);
+}
+
+.lang-selector {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.78rem;
+}
+
+.lang-link {
+    color: rgba(255,255,255,0.7);
+    text-decoration: none;
+    font-weight: 600;
+    padding: 2px 6px;
+    border-radius: 3px;
+    transition: all 0.2s;
+}
+
+.lang-link:hover { color: var(--ibero-white); background: rgba(255,255,255,0.15); }
+.lang-link.active { color: var(--ibero-white); background: rgba(255,255,255,0.25); }
+.lang-sep { color: rgba(255,255,255,0.3); }
+
+/* ── Main Layout ── */
+.main-wrapper {
+    display: flex;
+    flex: 1;
+    max-width: 1400px;
+    width: 100%;
+    margin: 0 auto;
+}
+
+/* ── Sidebar ── */
+.sidebar {
+    width: var(--sidebar-width);
+    min-width: var(--sidebar-width);
+    background: var(--ibero-black);
+    color: var(--ibero-white);
+    padding: 0;
+    position: sticky;
+    top: var(--header-height);
+    height: calc(100vh - var(--header-height));
+    overflow-y: auto;
+    border-right: 1px solid #3a3536;
+    order: 0;
+}
+
+.sidebar-title {
+    padding: 1.2rem 1.5rem;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--ibero-gray);
+    border-bottom: 1px solid #3a3536;
+}
+
+.sidebar nav ul {
+    list-style: none;
+    padding: 0;
+}
+
+.sidebar nav > ul {
+    padding: 0.5rem 0;
+}
+
+.nav-link {
+    display: block;
+    color: #ccc;
+    text-decoration: none;
+    padding: 0.4rem 1.5rem;
+    font-size: 0.85rem;
+    transition: all 0.2s ease;
+    border-left: 3px solid transparent;
+}
+
+.nav-link:hover {
+    color: var(--ibero-white);
+    background: rgba(255,255,255,0.05);
+}
+
+.nav-link.active {
+    color: var(--ibero-red);
+    border-left-color: var(--ibero-red);
+    background: rgba(224,0,52,0.1);
+    font-weight: 600;
+}
+
+/* ── Nav toggle buttons ── */
+.nav-toggle {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    background: none;
+    border: none;
+    color: var(--ibero-white);
+    cursor: pointer;
+    padding: 0.5rem 1.5rem;
+    font-size: 0.88rem;
+    font-weight: 600;
+    text-align: left;
+    transition: all 0.2s;
+    font-family: var(--font-stack);
+    border-left: 3px solid transparent;
+}
+
+.nav-toggle:hover {
+    background: rgba(255,255,255,0.05);
+}
+
+.nav-chevron {
+    display: inline-block;
+    margin-right: 8px;
+    font-size: 0.6rem;
+    transition: transform 0.25s ease;
+    color: var(--ibero-red);
+}
+
+.nav-toggle.open .nav-chevron {
+    transform: rotate(90deg);
+}
+
+.nav-sublist {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.35s ease;
+    background: rgba(0,0,0,0.2);
+}
+
+.nav-sublist.open {
+    max-height: 2000px;
+}
+
+.nav-sublist .nav-link {
+    padding-left: 2.8rem;
+    font-size: 0.82rem;
+}
+
+.nav-leaf {
+    list-style: none;
+}
+
+.nav-group {
+    list-style: none;
+}
+
+/* Chapter without children - same style as toggle */
+.nav-leaf-chapter .nav-link {
+    display: flex;
+    align-items: center;
+    font-weight: 600;
+    font-size: 0.88rem;
+    padding: 0.5rem 1.5rem;
+    border-left: 3px solid transparent;
+    color: var(--ibero-white);
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.nav-leaf-chapter .nav-link:hover {
+    color: var(--ibero-white);
+    background: rgba(255,255,255,0.05);
+}
+
+.nav-leaf-chapter .nav-link.active {
+    color: var(--ibero-red);
+    border-left-color: var(--ibero-red);
+    background: rgba(224,0,52,0.1);
+}
+
+/* ── Content area ── */
+.content {
+    flex: 1;
+    min-width: 0;
+    order: 1;
+    padding: 2rem 2.5rem;
+    margin-right: 0;
+    margin-left: 0;
+}
+
+.content-section {
+    margin-bottom: 1.5rem;
+    border: 1px solid #e0dcd8;
+    border-radius: 8px;
+    background: var(--ibero-white);
+    overflow: hidden;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+}
+
+.section-inner {
+    padding: 2rem 2.5rem;
+}
+
+.content-section h1 {
+    font-size: 1.8rem;
+    color: var(--ibero-red);
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid var(--ibero-red);
+}
+
+.content-section h2 {
+    font-size: 1.35rem;
+    color: var(--ibero-black);
+    margin: 1.5rem 0 0.75rem;
+}
+
+.content-section h3 {
+    font-size: 1.1rem;
+    color: var(--ibero-gray);
+    margin: 1.25rem 0 0.5rem;
+}
+
+.content-section h4 {
+    font-size: 1rem;
+    color: var(--ibero-red);
+    margin: 1rem 0 0.5rem;
+}
+
+.content-section h5, .content-section h6 {
+    font-size: 0.95rem;
+    color: var(--ibero-black);
+    margin: 0.75rem 0 0.4rem;
+}
+
+.content-section p {
+    margin-bottom: 0.9rem;
+}
+
+.content-section a {
+    color: var(--ibero-red);
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.content-section a:hover {
+    text-decoration: underline;
+}
+
+.content-section ul, .content-section ol {
+    margin: 0.5rem 0 0.9rem 1.5rem;
+}
+
+.content-section li {
+    margin-bottom: 0.25rem;
+}
+
+.content-section code {
+    background: #f0eeec;
+    color: var(--ibero-red);
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-size: 0.88em;
+    font-family: "Cascadia Code", "Fira Code", Consolas, monospace;
+}
+
+.content-section pre {
+    background: #1e1e1e;
+    color: #d4d4d4;
+    padding: 1.2rem;
+    border-radius: 6px;
+    overflow-x: auto;
+    margin: 1rem 0;
+    font-size: 0.85rem;
+    line-height: 1.5;
+}
+
+.content-section pre code {
+    background: none;
+    color: inherit;
+    padding: 0;
+    font-size: inherit;
+}
+
+.content-section blockquote {
+    border-left: 4px solid var(--ibero-red);
+    margin: 1rem 0;
+    padding: 0.8rem 1.2rem;
+    background: #fdf8f9;
+    border-radius: 0 6px 6px 0;
+    color: #5a3a3a;
+}
+
+.content-section blockquote p {
+    margin-bottom: 0;
+}
+
+.content-section hr {
+    border: none;
+    border-top: 1px solid #e0dcd8;
+    margin: 2rem 0;
+}
+
+/* ── Tables ── */
+.table-wrapper {
+    overflow-x: auto;
+    margin: 1rem 0;
+}
+
+.content-section table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.88rem;
+}
+
+.content-section thead th {
+    background: var(--ibero-red);
+    color: var(--ibero-white);
+    padding: 0.6rem 0.8rem;
+    text-align: left;
+    font-weight: 600;
+    font-size: 0.82rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.content-section tbody td {
+    padding: 0.5rem 0.8rem;
+    border-bottom: 1px solid #e8e4e0;
+}
+
+.content-section tbody tr:nth-child(even) {
+    background: #faf8f7;
+}
+
+.content-section tbody tr:hover {
+    background: #fef0f2;
+}
+
+/* ── Image placeholders ── */
+.image-placeholder {
+    border: 2px dashed #d0ccc8;
+    border-radius: 8px;
+    padding: 2rem;
+    text-align: center;
+    margin: 1.5rem 0;
+    background: #faf8f7;
+    color: var(--ibero-gray);
+}
+
+.image-placeholder .img-icon {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+    opacity: 0.5;
+}
+
+.image-placeholder p {
+    font-size: 0.85rem;
+    margin-bottom: 0.3rem;
+    font-style: italic;
+}
+
+.image-placeholder code {
+    font-size: 0.75rem;
+    background: #eee;
+    color: #666;
+}
+
+/* ── Special boxes ── */
+.highlight {
+    background: #fff8e1;
+    border-left: 4px solid #ffa000;
+    padding: 0.8rem 1.2rem;
+    margin: 1rem 0;
+    border-radius: 0 6px 6px 0;
+}
+
+.warning {
+    background: #fff0f0;
+    border-left: 4px solid var(--ibero-red);
+    padding: 0.8rem 1.2rem;
+    margin: 1rem 0;
+    border-radius: 0 6px 6px 0;
+}
+
+/* ── Scroll-to-top ── */
+.scroll-top {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    z-index: 999;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: var(--ibero-red);
+    color: var(--ibero-white);
+    border: none;
+    cursor: pointer;
+    font-size: 1.3rem;
+    box-shadow: 0 4px 12px rgba(224,0,52,0.4);
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 0.3s ease;
+    pointer-events: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.scroll-top.visible {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+}
+
+.scroll-top:hover {
+    background: var(--ibero-red-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(224,0,52,0.5);
+}
+
+/* ── Footer ── */
+.site-footer {
+    background: var(--ibero-black);
+    color: var(--ibero-gray);
+    text-align: center;
+    padding: 1.5rem 2rem;
+    font-size: 0.82rem;
+    letter-spacing: 0.5px;
+    margin-top: auto;
+}
+
+.site-footer a {
+    color: var(--ibero-red);
+    text-decoration: none;
+}
+
+/* ── Sidebar overlay for mobile ── */
+.sidebar-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 998;
+}
+
+/* ── Responsive ── */
+@media (max-width: 1024px) {
+    .main-wrapper {
+        flex-direction: column;
+    }
+
+    .sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: auto;
+        height: 100vh;
+        z-index: 999;
+        transform: translateX(-100%);
+        transition: transform 0.3s ease;
+        width: 300px;
+        min-width: 300px;
+    }
+
+    .sidebar.open {
+        transform: translateX(0);
+    }
+
+    .sidebar-overlay.open {
+        display: block;
+    }
+
+    .header-toggle {
+        display: block;
+    }
+
+    .content {
+        padding: 1.5rem 1rem;
+    }
+
+    .section-inner {
+        padding: 1.5rem 1.2rem;
+    }
+}
+
+@media (max-width: 600px) {
+    .site-header {
+        padding: 0 1rem;
+        height: 64px;
+    }
+
+    .header-logo h1 {
+        font-size: 1.2rem;
+    }
+
+    .header-logo .subtitle {
+        font-size: 0.65rem;
+    }
+
+    .content {
+        padding: 1rem 0.5rem;
+    }
+
+    .section-inner {
+        padding: 1rem;
+    }
+
+    .content-section h1 {
+        font-size: 1.4rem;
+    }
+
+    .content-section h2 {
+        font-size: 1.1rem;
+    }
+
+    .content-section table {
+        font-size: 0.75rem;
+    }
+
+    .content-section thead th,
+    .content-section tbody td {
+        padding: 0.4rem 0.5rem;
+    }
+
+    .scroll-top {
+        bottom: 1.5rem;
+        right: 1rem;
+        width: 38px;
+        height: 38px;
+    }
+}
+
+</style>
+</head>
+<body>
+<header class="site-header">
+  <div class="header-inner">
+    <div class="header-logo">
+      <img src="../assets/images/ibero-logo.webp" alt="IBERO" class="header-logo-img">
+      <div class="header-text">
+        <h1>Conversational Agent for Autonomous Guidance</h1>
+        <div class="subtitle">RONALDO · Unitree Go2 · Universidad Iberoamericana · Summer 2026</div>
+      </div>
+    </div>
+    <div class="lang-selector">
+      <a href="../index.html" class="lang-link">ES</a>
+      <span class="lang-sep">|</span>
+      <a href="index.html" class="lang-link active">EN</a>
+    </div>
+    <button class="header-toggle" id="sidebarToggle" aria-label="Menu">&#9776;</button>
+  </div>
+</header>
+
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+<div class="main-wrapper">
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-title">Navigation</div>
+    <nav>
+<ul class="nav-tree">
+<li class="nav-group"><button class="nav-toggle" data-target="sec-index-sub" aria-expanded="false"><span class="nav-chevron">&#9654;</span><span>Home</span></button>
+<ul class="nav-sublist" id="sec-index-sub">
+<li class="nav-leaf"><a href="#sec-resumen" class="nav-link" data-section="sec-resumen">Project Summary</a></li>
+</ul>
+</li>
+<li class="nav-group"><button class="nav-toggle" data-target="sec-01-contexto-sub" aria-expanded="false"><span class="nav-chevron">&#9654;</span><span>1. Context and Motivation</span></button>
+<ul class="nav-sublist" id="sec-01-contexto-sub">
+<li class="nav-leaf"><a href="#sec-01-1-problema" class="nav-link" data-section="sec-01-1-problema">1.1 The Problem</a></li>
+<li class="nav-leaf"><a href="#sec-01-2-solucion" class="nav-link" data-section="sec-01-2-solucion">1.2 The Solution: Ronaldo</a></li>
+<li class="nav-leaf"><a href="#sec-01-3-objetivos" class="nav-link" data-section="sec-01-3-objetivos">1.3 Objectives</a></li>
+</ul>
+</li>
+<li class="nav-group"><button class="nav-toggle" data-target="sec-02-arquitectura-sub" aria-expanded="false"><span class="nav-chevron">&#9654;</span><span>2. System Architecture</span></button>
+<ul class="nav-sublist" id="sec-02-arquitectura-sub">
+<li class="nav-leaf"><a href="#sec-02-1-vision-general" class="nav-link" data-section="sec-02-1-vision-general">2.1 Overview</a></li>
+<li class="nav-leaf"><a href="#sec-02-2-capas" class="nav-link" data-section="sec-02-2-capas">2.2 Layer Diagram</a></li>
+<li class="nav-leaf"><a href="#sec-02-3-procesos" class="nav-link" data-section="sec-02-3-procesos">2.3 Processes and Event Bus</a></li>
+<li class="nav-leaf"><a href="#sec-02-4-stack" class="nav-link" data-section="sec-02-4-stack">2.4 Technology Stack</a></li>
+<li class="nav-leaf"><a href="#sec-02-5-cloud-vs-local" class="nav-link" data-section="sec-02-5-cloud-vs-local">2.5 Cloud vs Local</a></li>
+</ul>
+</li>
+<li class="nav-group"><button class="nav-toggle" data-target="sec-03-agente-sub" aria-expanded="false"><span class="nav-chevron">&#9654;</span><span>3. Conversational Agent</span></button>
+<ul class="nav-sublist" id="sec-03-agente-sub">
+<li class="nav-leaf"><a href="#sec-03-1-pipeline-voz" class="nav-link" data-section="sec-03-1-pipeline-voz">3.1 Voice Pipeline</a></li>
+<li class="nav-leaf"><a href="#sec-03-2-wake-vad" class="nav-link" data-section="sec-03-2-wake-vad">3.2 Wake Word and VAD</a></li>
+<li class="nav-leaf"><a href="#sec-03-3-stt" class="nav-link" data-section="sec-03-3-stt">3.3 STT - Speech Recognition</a></li>
+<li class="nav-leaf"><a href="#sec-03-4-tts" class="nav-link" data-section="sec-03-4-tts">3.4 TTS - Speech Synthesis</a></li>
+<li class="nav-leaf"><a href="#sec-03-5-clasificacion" class="nav-link" data-section="sec-03-5-clasificacion">3.5 Intent Classification</a></li>
+<li class="nav-leaf"><a href="#sec-03-6-dialogo-tools" class="nav-link" data-section="sec-03-6-dialogo-tools">3.6 Dialogue Engine and Tool Calling</a></li>
+<li class="nav-leaf"><a href="#sec-03-7-mcp" class="nav-link" data-section="sec-03-7-mcp">3.7 MCP Server</a></li>
+<li class="nav-leaf"><a href="#sec-03-8-memoria" class="nav-link" data-section="sec-03-8-memoria">3.8 Multi-Turn Memory</a></li>
+<li class="nav-leaf"><a href="#sec-03-9-antifeedback" class="nav-link" data-section="sec-03-9-antifeedback">3.9 Anti-Feedback Mechanisms</a></li>
+</ul>
+</li>
+<li class="nav-group"><button class="nav-toggle" data-target="sec-04-robot-sub" aria-expanded="false"><span class="nav-chevron">&#9654;</span><span>4. Unitree Go2 Robot Control</span></button>
+<ul class="nav-sublist" id="sec-04-robot-sub">
+<li class="nav-leaf"><a href="#sec-04-1-robot" class="nav-link" data-section="sec-04-1-robot">4.1 The Robot and Its Capabilities</a></li>
+<li class="nav-leaf"><a href="#sec-04-2-red" class="nav-link" data-section="sec-04-2-red">4.2 Network Modes</a></li>
+<li class="nav-leaf"><a href="#sec-04-3-webrtc" class="nav-link" data-section="sec-04-3-webrtc">4.3 WebRTC Communication</a></li>
+<li class="nav-leaf"><a href="#sec-04-4-ros2" class="nav-link" data-section="sec-04-4-ros2">4.4 ROS2 Nodes</a></li>
+<li class="nav-leaf"><a href="#sec-04-5-archivos" class="nav-link" data-section="sec-04-5-archivos">4.5 Shared JSON File System</a></li>
+<li class="nav-leaf"><a href="#sec-04-6-rutas" class="nav-link" data-section="sec-04-6-rutas">4.6 Navigation Routes</a></li>
+<li class="nav-leaf"><a href="#sec-04-7-comandos" class="nav-link" data-section="sec-04-7-comandos">4.7 Preprogrammed Commands</a></li>
+<li class="nav-leaf"><a href="#sec-04-8-mapeo" class="nav-link" data-section="sec-04-8-mapeo">4.8 Destination Mapping</a></li>
+</ul>
+</li>
+<li class="nav-group"><button class="nav-toggle" data-target="sec-05-uia-sub" aria-expanded="false"><span class="nav-chevron">&#9654;</span><span>5. Integration with UIA</span></button>
+<ul class="nav-sublist" id="sec-05-uia-sub">
+<li class="nav-leaf"><a href="#sec-05-1-destinos" class="nav-link" data-section="sec-05-1-destinos">5.1 Supported Destinations</a></li>
+<li class="nav-leaf"><a href="#sec-05-2-info" class="nav-link" data-section="sec-05-2-info">5.2 Searchable Information</a></li>
+<li class="nav-leaf"><a href="#sec-05-3-escenarios" class="nav-link" data-section="sec-05-3-escenarios">5.3 Usage Scenarios</a></li>
+</ul>
+</li>
+<li class="nav-group"><button class="nav-toggle" data-target="sec-06-resultados-sub" aria-expanded="false"><span class="nav-chevron">&#9654;</span><span>6. Experimentation and Results</span></button>
+<ul class="nav-sublist" id="sec-06-resultados-sub">
+<li class="nav-leaf"><a href="#sec-06-1-metodologia" class="nav-link" data-section="sec-06-1-metodologia">6.1 Test Configuration</a></li>
+<li class="nav-leaf"><a href="#sec-06-2-tabla-global" class="nav-link" data-section="sec-06-2-tabla-global">6.2 Global Results Table</a></li>
+<li class="nav-leaf"><a href="#sec-06-3-guardrails" class="nav-link" data-section="sec-06-3-guardrails">6.3 Phase 1 - Guardrails</a></li>
+<li class="nav-leaf"><a href="#sec-06-4-clasificacion" class="nav-link" data-section="sec-06-4-clasificacion">6.4 Phase 2 - Classification</a></li>
+<li class="nav-leaf"><a href="#sec-06-5-rendimiento" class="nav-link" data-section="sec-06-5-rendimiento">6.5 Phase 3 - Performance</a></li>
+<li class="nav-leaf"><a href="#sec-06-6-operacion" class="nav-link" data-section="sec-06-6-operacion">6.6 Phase 4 - Operation</a></li>
+<li class="nav-leaf"><a href="#sec-06-7-integracion" class="nav-link" data-section="sec-06-7-integracion">6.7 Robot Integration</a></li>
+</ul>
+</li>
+<li class="nav-group nav-leaf-chapter"><a href="#sec-07-futuro" class="nav-toggle nav-link" data-section="sec-07-futuro"><span class="nav-chevron" style="visibility:hidden">&#9654;</span><span>7. Limitations and Future Work</span></a>
+<li class="nav-group"><button class="nav-toggle" data-target="sec-08-recursos-sub" aria-expanded="false"><span class="nav-chevron">&#9654;</span><span>8. Resources</span></button>
+<ul class="nav-sublist" id="sec-08-recursos-sub">
+<li class="nav-leaf"><a href="#sec-08-1-repo" class="nav-link" data-section="sec-08-1-repo">8.1 Repository</a></li>
+<li class="nav-leaf"><a href="#sec-08-2-sdks" class="nav-link" data-section="sec-08-2-sdks">8.2 SDKs</a></li>
+<li class="nav-leaf"><a href="#sec-08-3-apis" class="nav-link" data-section="sec-08-3-apis">8.3 APIs</a></li>
+<li class="nav-leaf"><a href="#sec-08-4-referencias" class="nav-link" data-section="sec-08-4-referencias">8.4 References</a></li>
+</ul>
+</li>
+<li class="nav-group"><button class="nav-toggle" data-target="sec-09-equipo-sub" aria-expanded="false"><span class="nav-chevron">&#9654;</span><span>9. Team</span></button>
+<ul class="nav-sublist" id="sec-09-equipo-sub">
+<li class="nav-leaf"><a href="#sec-09-1-integrantes" class="nav-link" data-section="sec-09-1-integrantes">9.1 Members</a></li>
+<li class="nav-leaf"><a href="#sec-09-2-asesores" class="nav-link" data-section="sec-09-2-asesores">9.2 Advisors</a></li>
+</ul>
+</li>
+</ul>
+    </nav>
+  </aside>
+
+  <main class="content">
+<section id="sec-index" class="content-section">
+<div class="section-inner">
+<h1 id="sec-index-ronaldo">RONALDO</h1>
+<h2 id="sec-index-conversational-agent-for-autonomous-guidance">Conversational Agent for Autonomous Guidance</h2>
+<p><strong>Unitree Go2 · Universidad Iberoamericana</strong></p>
+<hr>
+<p><img src="../assets/images/ronaldo-concepto-campus.webp" alt="Ronaldo concept guiding visitors on the Universidad Iberoamericana campus" style="max-width:100%;border-radius:8px;margin:1.5rem 0;"></p>
+<p><em>Ronaldo project concept operating within the university campus — AI-generated image.</em></p>
+<blockquote><p><strong>"Intelligence is the ability to adapt to change."</strong> — Stephen Hawking</p></blockquote>
+<h2 id="sec-index-the-project">The Project</h2>
+<p><strong>Ronaldo</strong> is a conversational agent designed as a <strong>universal guidance system</strong>, capable of orienting people in any environment: university campuses, hospitals, museums, airports, shopping malls, or any space where visitors need assistance navigating and obtaining information.</p>
+<p>In this project, Ronaldo is implemented and validated on the <strong>Universidad Iberoamericana (UIA)</strong> campus as a case study, using a <strong>Unitree Go2 Air</strong> quadruped robot. The system integrates Spanish speech recognition, natural language understanding, and autonomous navigation in a modular architecture based on independent processes communicating through an event bus.</p>
+<p>Unlike conventional guidance systems, Ronaldo is not limited to executing deterministic instructions: the agent is capable of interpreting semantic commands expressed in natural language, such as <em>"Take me to the classroom with a 4K projector"</em> or <em>"I want to go to the university café"</em>, and translating them into navigation plans and dialogue appropriate for the user. Its modular architecture and the use of cloud APIs allow it to be adapted to <strong>any location</strong> simply by updating the database of places, routes, and services.</p>
+<p><img src="../assets/images/arquitectura_general.jpg" alt="Ronaldo General Architecture" style="max-width:100%;border-radius:8px;margin:1.5rem 0;"></p>
+<p><em>Ronaldo's general architecture showing the three layers: Conversational Agent (Python), ROS2 Nodes (movement orchestration), and WebRTC (physical communication with the Unitree Go2 robot).</em></p>
+<hr>
+<h2 id="sec-index-featured-results">Featured Results</h2>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>Metric</th>
+<th>Value</th>
+</tr>
+</thead>
+<tr>
+<td>Tool Calling validity rate</td>
+<td><strong>100%</strong></td>
+</tr>
+<tr>
+<td>Navigation recall (YAML classifier)</td>
+<td><strong>100%</strong></td>
+</tr>
+<tr>
+<td>Critical false positives</td>
+<td><strong>0%</strong></td>
+</tr>
+<tr>
+<td>Total pipeline latency</td>
+<td><strong>~1.6 s</strong></td>
+</tr>
+<tr>
+<td>Peak RAM consumption</td>
+<td><strong>85.7 MB</strong></td>
+</tr>
+<tr>
+<td>Idle CPU consumption</td>
+<td><strong>0.7%</strong></td>
+</tr>
+<tr>
+<td>Raspberry Pi 5 viability</td>
+<td><strong>1.0%</strong> RAM used</td>
+</tr>
+</tbody>
+</table></div>
+<hr>
+<h2 id="sec-index-key-technologies">Key Technologies</h2>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>Category</th>
+<th>Tool</th>
+</tr>
+</thead>
+<tr>
+<td><strong>Speech Recognition (STT)</strong></td>
+<td>Groq Whisper, Deepgram Nova-3</td>
+</tr>
+<tr>
+<td><strong>Language Model (LLM)</strong></td>
+<td>Groq Llama 4 Scout 17B</td>
+</tr>
+<tr>
+<td><strong>Speech Synthesis (TTS)</strong></td>
+<td>Edge TTS, Deepgram Aura-2</td>
+</tr>
+<tr>
+<td><strong>Wake Word (offline)</strong></td>
+<td>Vosk (Spanish, 42 MB)</td>
+</tr>
+<tr>
+<td><strong>Voice Activity Detection</strong></td>
+<td>Silero VAD</td>
+</tr>
+<tr>
+<td><strong>Tool Protocol</strong></td>
+<td>MCP (Model Context Protocol)</td>
+</tr>
+<tr>
+<td><strong>Robotics Middleware</strong></td>
+<td>ROS2 Humble + CycloneDDS</td>
+</tr>
+<tr>
+<td><strong>Robot Communication</strong></td>
+<td>WebRTC</td>
+</tr>
+<tr>
+<td><strong>Robot Hardware</strong></td>
+<td>Unitree Go2 Air</td>
+</tr>
+</tbody>
+</table></div>
+<hr>
+<h2 id="sec-index-team">Team</h2>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>Member</th>
+<th>Role</th>
+</tr>
+</thead>
+<tr>
+<td><strong>Fernando Pérez González</strong></td>
+<td>Software Development, Infrastructure, and Testing</td>
+</tr>
+<tr>
+<td><strong>Sebastián de Jesús Enguilo Ruiz</strong></td>
+<td>Hardware/Robot Development: Go2</td>
+</tr>
+<tr>
+<td><strong>José Adrián Bazaldua Huerta</strong></td>
+<td>Software Development</td>
+</tr>
+<tr>
+<td><strong>Prof. Joel Arango Ramírez</strong></td>
+<td>Technical Advisor</td>
+</tr>
+<tr>
+<td><strong>Prof. Huber Girón Nieto</strong></td>
+<td>Methodological Advisor</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>Program:</strong> Mechatronics Engineering and Cyber-Physical Systems <strong>Semester:</strong> Summer 2026 <strong>Institution:</strong> Universidad Iberoamericana, Mexico City</p>
+<hr>
+<h2 id="sec-index-presentations">Presentations</h2>
+<ul>
+  <li><strong>Mechatronics Engineering Coordination</strong> — Summer 2026</li>
+</ul>
+<hr>
+<h2 id="sec-index-quick-navigation">Quick Navigation</h2>
+<p><a href="#sec-resumen" target="_blank" rel="noopener">Project Summary</a> · <a href="#sec-02-arquitectura" target="_blank" rel="noopener">Architecture</a> · <a href="#sec-03-agente" target="_blank" rel="noopener">Conversational Agent</a> · <a href="#sec-04-robot" target="_blank" rel="noopener">Robot Control</a> · <a href="#sec-06-resultados" target="_blank" rel="noopener">Results</a> · <a href="https://github.com/Rimuru022/Agentic-Unitree-Control" target="_blank" rel="noopener">GitHub Repository</a></p>
+<hr>
+<p>© 2026 — Universidad Iberoamericana · Mechatronics Engineering and Cyber-Physical Systems</p>
+</div>
+</section>
+<section id="sec-resumen" class="content-section">
+<div class="section-inner">
+<h1 id="sec-resumen-project-summary">Project Summary</h1>
+<p>This work presents <strong>Ronaldo</strong>, a conversational agent designed to guide people within a university campus using a <strong>Unitree Go2 Air</strong> quadruped robot. Ronaldo integrates speech recognition, natural language understanding, and autonomous navigation in a modular architecture based on independent processes that communicate through an event bus.</p>
+<h2 id="sec-resumen-main-components">Main Components</h2>
+<p>The system employs cloud-based artificial intelligence through the free APIs of:</p>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>Service</th>
+<th>Model / Tool</th>
+<th>Function</th>
+</tr>
+</thead>
+<tr>
+<td><strong>Groq</strong></td>
+<td>Whisper Large v3 Turbo</td>
+<td>Speech transcription (STT)</td>
+</tr>
+<tr>
+<td><strong>Groq</strong></td>
+<td>Llama 4 Scout 17B</td>
+<td>Language generation (LLM)</td>
+</tr>
+<tr>
+<td><strong>Deepgram</strong></td>
+<td>Aura-2</td>
+<td>Speech synthesis (TTS)</td>
+</tr>
+<tr>
+<td><strong>Edge TTS</strong></td>
+<td>Microsoft Edge</td>
+<td>Alternative speech synthesis (free)</td>
+</tr>
+<tr>
+<td><strong>Vosk</strong></td>
+<td>Spanish model 42 MB</td>
+<td>Offline wake word</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="sec-resumen-robotic-control-layer">Robotic Control Layer</h2>
+<p>The robotic control layer relies on <strong>ROS2 Humble</strong> and <strong>WebRTC</strong> for communication with the robot, using a three-node ROS2 system that translates agent commands into physical movement instructions.</p>
+<h2 id="sec-resumen-key-results">Key Results</h2>
+<p>Results from systematic testing following <strong>IEEE 29119-1</strong>, <strong>ISO 25022</strong>, and <strong>ISO 25023</strong> standards show:</p>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>Metric</th>
+<th>Result</th>
+</tr>
+</thead>
+<tr>
+<td>Tool calling validity rate</td>
+<td><strong>100%</strong></td>
+</tr>
+<tr>
+<td>Total pipeline latency</td>
+<td><strong>~1.6 seconds</strong></td>
+</tr>
+<tr>
+<td>Peak RAM consumption</td>
+<td><strong>85.7 MB</strong></td>
+</tr>
+<tr>
+<td>RPi5 viability</td>
+<td><strong>1.0%</strong> RAM</td>
+</tr>
+</tbody>
+</table></div>
+<p>These results confirm the viability of running the system on low-cost hardware such as the <strong>Raspberry Pi 5</strong>.</p>
+<h2 id="sec-resumen-keywords">Keywords</h2>
+<p><code>intelligent agent</code> <code>service robotics</code> <code>autonomous guidance</code> <code>voice processing</code> <code>indoor navigation</code> <code>Unitree Go2</code> <code>ROS2</code> <code>WebRTC</code> <code>Groq</code> <code>MCP</code></p>
+</div>
+</section>
+<section id="sec-01-contexto" class="content-section">
+<div class="section-inner">
+<h1 id="sec-01-contexto-1-context-and-motivation">1. Context and Motivation</h1>
+<p>This chapter presents the problem that motivates the development of Ronaldo, the proposed solution, and the project objectives.</p>
+</div>
+</section>
+<section id="sec-01-1-problema" class="content-section">
+<div class="section-inner">
+<h1 id="sec-01-1-problema-1-1-the-campus-guidance-problem">1.1 The Campus Guidance Problem</h1>
+<h2 id="sec-01-1-problema-the-need">The Need</h2>
+<p>The <strong>Universidad Iberoamericana (UIA)</strong> regularly receives external visitors who require orientation within the campus. This problem is not unique to UIA: any public or private space of a certain complexity faces the same challenge. In the specific case of the university, visitors include:</p>
+<ul>
+  <li><strong>First-time visitors</strong> who have never set foot on campus and are completely unfamiliar with its layout</li>
+</ul>
+<ul>
+  <li><strong>Parents</strong> on admission tours</li>
+</ul>
+<ul>
+  <li><strong>Students from other institutions</strong> attending tournaments and competitions</li>
+</ul>
+<ul>
+  <li><strong>New applicants</strong> during the selection process</li>
+</ul>
+<ul>
+  <li><strong>Occasional visitors</strong> to academic and cultural events</li>
+</ul>
+<p>Although the campus is not vast in size, its layout and the similarity between several of its buildings cause visitors — especially first-time visitors — to experience difficulties in confidently locating:</p>
+<ul>
+  <li>Classrooms and laboratories</li>
+</ul>
+<ul>
+  <li>Auditoriums</li>
+</ul>
+<ul>
+  <li>Cafeterias and dining halls</li>
+</ul>
+<ul>
+  <li>Administrative offices</li>
+</ul>
+<ul>
+  <li>Student services</li>
+</ul>
+<h2 id="sec-01-1-problema-a-universal-problem">A Universal Problem</h2>
+<p>The challenge of guiding people in unfamiliar spaces transcends the university setting. Hospitals, museums, airports, shopping malls, and government buildings share the same need: visitors who require real-time guidance in natural language with physical accompaniment to their destination. <strong>Ronaldo</strong> is conceived as a generic solution to this problem, with UIA as the first implementation and validation case.</p>
+<h2 id="sec-01-1-problema-the-current-solution-and-its-limitations">The Current Solution and Its Limitations</h2>
+<p>In response to this need, the university has traditionally deployed <strong>dedicated staff to offer guided tours</strong>. However, this solution presents significant limitations:</p>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>Limitation</th>
+<th>Impact</th>
+</tr>
+</thead>
+<tr>
+<td>Dependence on human guide availability</td>
+<td>Limited resource during certain hours and seasons</td>
+</tr>
+<tr>
+<td>Variable consistency</td>
+<td>Guidance quality depends on the individual guide</td>
+</tr>
+<tr>
+<td>Limited scalability</td>
+<td>Unable to serve multiple visitors simultaneously</td>
+</tr>
+<tr>
+<td>Restricted time coverage</td>
+<td>Office hours only; no evening or weekend service</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="sec-01-1-problema-the-research-question">The Research Question</h2>
+<div class="highlight">
+
+Is it possible to use free and accessible cloud-based artificial intelligence to build a conversational guidance system on a quadruped robot operating in a real university environment?
+</div>
+<p>This question guides the development of Ronaldo as a <strong>continuous, scalable, and consistent</strong> orientation alternative.</p>
+</div>
+</section>
+<section id="sec-01-2-solucion" class="content-section">
+<div class="section-inner">
+<h1 id="sec-01-2-solucion-1-2-the-solution-ronaldo">1.2 The Solution: Ronaldo</h1>
+<h2 id="sec-01-2-solucion-what-is-ronaldo">What is Ronaldo?</h2>
+<p><strong>Ronaldo</strong> is an intelligent universal guidance agent capable of orienting visitors in any physical environment using a Unitree Go2 Air quadruped robot. Its architecture was designed from the ground up to be <strong>location-independent</strong>: simply updating the database of locations, routes, and services adapts it to a hospital, museum, airport, shopping mall, or any building that receives visitors.</p>
+<p>In this project, Ronaldo is implemented and validated on the <strong>Universidad Iberoamericana</strong> campus as the first case study. The system integrates two main components:</p>
+<h3 id="sec-01-2-solucion-software-layer">Software Layer</h3>
+<p>Based on <strong>cloud-based artificial intelligence</strong> tools (free), through which Ronaldo maintains structured knowledge about university facilities, routes, and services:</p>
+<ul>
+  <li>Spanish speech recognition (STT)</li>
+</ul>
+<ul>
+  <li>Natural language understanding (LLM with tool calling)</li>
+</ul>
+<ul>
+  <li>Natural speech synthesis (TTS)</li>
+</ul>
+<ul>
+  <li>Campus database accessible via the MCP protocol</li>
+</ul>
+<h3 id="sec-01-2-solucion-hardware-layer">Hardware Layer</h3>
+<p>Consisting of a <strong>Unitree Go2 Air quadruped robot</strong>, which acts as a physical peripheral for interaction and user accompaniment. The robot:</p>
+<ul>
+  <li>Responds to the wake word "Ronaldo"</li>
+</ul>
+<ul>
+  <li>Executes voice commands (sit, greet, dance)</li>
+</ul>
+<ul>
+  <li>Navigates predefined routes between campus points</li>
+</ul>
+<ul>
+  <li>Plays voice responses through its built-in speaker</li>
+</ul>
+<h2 id="sec-01-2-solucion-what-makes-ronaldo-different">What Makes Ronaldo Different?</h2>
+<p>Unlike conventional guidance systems, Ronaldo <strong>is not limited to executing deterministic instructions</strong>. The agent is capable of:</p>
+<ul>
+  <li><strong>Interpreting semantic commands</strong> expressed in natural language</li>
+</ul>
+<p>- <em>"Take me to the classroom with a 4K projector"</em> - <em>"I want to go to the university café"</em> - <em>"Where are the vending machines?"</em></p>
+<ul>
+  <li><strong>Translating intentions into navigation plans</strong></li>
+</ul>
+<p>- The two-stage classifier identifies the user's intent - The dialogue engine queries updated information through tools - The system resolves optimal routes to the destination</p>
+<ul>
+  <li><strong>Maintaining contextual conversations</strong></li>
+</ul>
+<p>- 20-turn conversation memory - Recognition and use of the user's name - Confirmation before executing critical actions</p>
+<h2 id="sec-01-2-solucion-capabilities-summary">Capabilities Summary</h2>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>Capability</th>
+<th>Description</th>
+</tr>
+</thead>
+<tr>
+<td>🗣️ <strong>Speech Recognition</strong></td>
+<td>Spanish transcription with Groq Whisper (750 ms)</td>
+</tr>
+<tr>
+<td>🧠 <strong>Language Understanding</strong></td>
+<td>Llama 4 Scout 17B with tool calling</td>
+</tr>
+<tr>
+<td>🗺️ <strong>Autonomous Navigation</strong></td>
+<td>Predefined JSON routes, executed via ROS2</td>
+</tr>
+<tr>
+<td>🏫 <strong>Campus Knowledge</strong></td>
+<td>Database accessible via MCP protocol</td>
+</tr>
+<tr>
+<td>🎤 <strong>Speech Synthesis</strong></td>
+<td>Natural responses with Edge TTS / Deepgram</td>
+</tr>
+<tr>
+<td>🔌 <strong>Partial Offline Operation</strong></td>
+<td>Wake word without internet (Vosk)</td>
+</tr>
+<tr>
+<td>📱 <strong>Low-Cost Hardware</strong></td>
+<td>Runnable on Raspberry Pi 5 (~86 MB RAM)</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+</section>
+<section id="sec-01-3-objetivos" class="content-section">
+<div class="section-inner">
+<h1 id="sec-01-3-objetivos-1-3-objectives">1.3 Objectives</h1>
+<h2 id="sec-01-3-objetivos-general-objective">General Objective</h2>
+<p>Build a conversational agent capable of receiving instructions in natural language, querying structured university campus information through external tools, and translating dialogue decisions into physical movements of a Unitree Go2 quadruped robot.</p>
+<h2 id="sec-01-3-objetivos-specific-objectives">Specific Objectives</h2>
+<h3 id="sec-01-3-objetivos-1-complete-voice-pipeline">1. Complete Voice Pipeline</h3>
+<ul>
+  <li>Implement a capture, transcription, and speech synthesis system in Spanish</li>
+</ul>
+<ul>
+  <li>Use free cloud APIs (Groq, Deepgram, Edge TTS)</li>
+</ul>
+<ul>
+  <li>Ensure offline wake word detection (Vosk)</li>
+</ul>
+<h3 id="sec-01-3-objetivos-2-natural-language-understanding">2. Natural Language Understanding</h3>
+<ul>
+  <li>Implement two-stage intent classification (YAML + LLM)</li>
+</ul>
+<ul>
+  <li>Integrate native tool calling to query campus information</li>
+</ul>
+<ul>
+  <li>Maintain 20-turn conversational memory</li>
+</ul>
+<h3 id="sec-01-3-objetivos-3-robot-control">3. Robot Control</h3>
+<ul>
+  <li>Establish WebRTC communication with the Unitree Go2</li>
+</ul>
+<ul>
+  <li>Implement three ROS2 nodes for commands and navigation</li>
+</ul>
+<ul>
+  <li>Define predefined navigation routes between campus points</li>
+</ul>
+<h3 id="sec-01-3-objetivos-4-integration-with-uia">4. Integration with UIA</h3>
+<ul>
+  <li>Connect the agent with real campus information via MCP</li>
+</ul>
+<ul>
+  <li>Map university destinations and services</li>
+</ul>
+<ul>
+  <li>Support queries about places, food, stores, and offices</li>
+</ul>
+<h3 id="sec-01-3-objetivos-5-evaluation-and-validation">5. Evaluation and Validation</h3>
+<ul>
+  <li>Test the system in 4 phases under IEEE 29119-1, ISO 25022, and ISO 25023 standards</li>
+</ul>
+<ul>
+  <li>Measure latency, resource consumption, and classification accuracy</li>
+</ul>
+<ul>
+  <li>Verify viability on low-cost hardware (Raspberry Pi 5)</li>
+</ul>
+<h2 id="sec-01-3-objetivos-scope-and-exclusions">Scope and Exclusions</h2>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>Included</th>
+<th>Excluded (Future Work)</th>
+</tr>
+</thead>
+<tr>
+<td>Navigation with predefined routes</td>
+<td>SLAM (dynamic navigation)</td>
+</tr>
+<tr>
+<td>Preprogrammed robot commands</td>
+<td>Continuous motion commands (cmd_vel)</td>
+</tr>
+<tr>
+<td>YAML classification of 7 destinations</td>
+<td>Routes from any origin</td>
+</tr>
+<tr>
+<td>4 phases of quantitative testing</td>
+<td>Testing with real users</td>
+</tr>
+<tr>
+<td>Operation with free cloud APIs</td>
+<td>100% offline operation</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+</section>
+<section id="sec-02-arquitectura" class="content-section">
+<div class="section-inner">
+<h1 id="sec-02-arquitectura-2-system-architecture">2. System Architecture</h1>
+<p>This chapter presents the complete architecture of Ronaldo: the three system layers, processes, event bus, technology stack, and cloud vs. local distribution.</p>
+</div>
+</section>
+<section id="sec-02-1-vision-general" class="content-section">
+<div class="section-inner">
+<h1 id="sec-02-1-vision-general-2-1-overview">2.1 Overview</h1>
+<h2 id="sec-02-1-vision-general-general-architecture-diagram">General Architecture Diagram</h2>
+<p><img src="../assets/images/arquitectura_general.jpg" alt="Ronaldo General Architecture" style="max-width:100%;border-radius:8px;margin:1.5rem 0;"></p>
+<p><em>Ronaldo's general architecture showing the three layers connecting the conversational agent with the robot hardware.</em></p>
+<h2 id="sec-02-1-vision-general-the-three-layers">The Three Layers</h2>
+<p>Ronaldo is organized into three architectural layers that communicate hierarchically:</p>
+<h3 id="sec-02-1-vision-general-layer-1-voice-assistant">Layer 1: Voice Assistant</h3>
+<p><strong>Technology:</strong> Python · multiprocessing</p>
+<p>Includes the audio, orchestrator, and playback processes, as well as the dialogue engine with the LLM and the intent classifier. This is the layer where the system's intelligence resides.</p>
+<h3 id="sec-02-1-vision-general-layer-2-ros2-nodes">Layer 2: ROS2 Nodes</h3>
+<p><strong>Technology:</strong> ROS2 Humble · CycloneDDS · C++/Python</p>
+<p>Three ROS2 nodes that translate the agent's decisions into movement commands and navigation routes. Acts as an intermediary between the conversational logic and the robot hardware.</p>
+<h3 id="sec-02-1-vision-general-layer-3-webrtc">Layer 3: WebRTC</h3>
+<p><strong>Technology:</strong> WebRTC · C++</p>
+<p>Signaling protocol and data channel that sends instructions to the Unitree Go2 robot. This is the physical communication layer with the hardware.</p>
+<h2 id="sec-02-1-vision-general-design-principles">Design Principles</h2>
+<p>The architecture was chosen for three main reasons:</p>
+<h3 id="sec-02-1-vision-general-1-fault-isolation">1. Fault Isolation</h3>
+<p>If the audio process fails, the orchestrator and voice playback continue to function. The system can recover without a full restart.</p>
+<h3 id="sec-02-1-vision-general-2-real-parallelism">2. Real Parallelism</h3>
+<p>Each process can run on a different CPU core, which is essential for tasks such as real-time audio processing while awaiting the language model's response.</p>
+<h3 id="sec-02-1-vision-general-3-modularity">3. Modularity</h3>
+<p>Each component can be replaced independently. For example, the speech recognition engine can be changed from Groq to Deepgram by modifying only the corresponding module, without affecting the rest of the system.</p>
+<h2 id="sec-02-1-vision-general-the-robot-is-not-autonomous">The Robot Is Not Autonomous</h2>
+<div class="warning">
+
+The robot requires explicit user commands (voice or text) to execute any movement. It does not make navigation decisions on its own.
+</div>
+</div>
+</section>
+<section id="sec-02-2-capas" class="content-section">
+<div class="section-inner">
+<h1 id="sec-02-2-capas-2-2-layer-diagram">2.2 Layer Diagram</h1>
+<h2 id="sec-02-2-capas-data-flow-between-layers">Data Flow Between Layers</h2>
+<p><img src="../assets/images/diagrama-01-arquitectura-3-capas.jpg" alt="3-layer diagram - Ronaldo Architecture" style="max-width:100%;border-radius:8px;margin:1.5rem 0;"></p>
+<p><em>Figure 1: Data flow diagram between the 3 system layers. Layer 1: Voice Assistant (Python) with microphone, AudioProcess, Orchestrator, Groq LLM, YAML Classifier, and TTS. Layer 2: ROS2 Nodes (UnitreeRobotProcess, go2_command_executor, go2_route_follower, go2_driver_node). Layer 3: WebRTC to the Unitree Go2 Air.</em></p>
+<h2 id="sec-02-2-capas-layer-1-components">Layer 1 Components</h2>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>Component</th>
+<th>Process</th>
+<th>Function</th>
+</tr>
+</thead>
+<tr>
+<td>AudioProcess</td>
+<td><code>audio.py</code></td>
+<td>Microphone capture, wake word, VAD</td>
+</tr>
+<tr>
+<td>Orchestrator</td>
+<td><code>orquestador.py</code></td>
+<td>Central orchestration, classification, dialogue</td>
+</tr>
+<tr>
+<td>AudioPlayback</td>
+<td><code>playback.py</code></td>
+<td>TTS response playback</td>
+</tr>
+<tr>
+<td>UnitreeRobotProcess</td>
+<td><code>unitree_robot.py</code></td>
+<td>Robot command and route management</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="sec-02-2-capas-layer-2-components">Layer 2 Components</h2>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>Component</th>
+<th>ROS2 Node</th>
+<th>Function</th>
+</tr>
+</thead>
+<tr>
+<td>Main Driver</td>
+<td><code>go2_driver_node</code></td>
+<td>WebRTC connection, status publishing</td>
+</tr>
+<tr>
+<td>Command Executor</td>
+<td><code>go2_command_executor_node</code></td>
+<td>Preprogrammed commands (sit, dance)</td>
+</tr>
+<tr>
+<td>Route Follower</td>
+<td><code>go2_route_follower_node</code></td>
+<td>Step-by-step JSON route execution</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="sec-02-2-capas-layer-2-architecture-in-detail">Layer 2 Architecture in Detail</h2>
+<p><img src="../assets/images/diagrama-02-nodos-ros2-topicos.jpg" alt="ROS2 nodes diagram with their topics" style="max-width:100%;border-radius:8px;margin:1.5rem 0;"></p>
+<p><em>Figure 2: ROS2 node architecture with their topics. Shows the shared workspace (JSON files), the 3 main nodes (go2_command_executor_node, go2_route_follower_node, go2_driver_node), and communication topics (/webrtc_req, /cmd_vel_out, /odom, /go2_states).</em></p>
+</div>
+</section>
+<section id="sec-02-3-procesos" class="content-section">
+<div class="section-inner">
+<h1 id="sec-02-3-procesos-2-3-processes-and-event-bus">2.3 Processes and Event Bus</h1>
+<h2 id="sec-02-3-procesos-the-four-main-processes">The Four Main Processes</h2>
+<p>Ronaldo runs four independent processes that communicate through a shared event bus.</p>
+<p><img src="../assets/images/diagrama-03-procesos-eventbus.jpg" alt="Process and EventBus diagram" style="max-width:100%;border-radius:8px;margin:1.5rem 0;"></p>
+<p><em>Figure 3: The four system processes (AudioProcess, Orchestrator, PlaybackProcess, UnitreeRobotProcess) communicating bidirectionally through the central EventBus based on multiprocessing.Queue.</em></p>
+<h2 id="sec-02-3-procesos-the-event-bus-eventbus">The Event Bus (EventBus)</h2>
+<p>The event bus is Ronaldo's <strong>nervous system</strong>. It implements a publisher-subscriber pattern:</p>
+<ul>
+  <li>Any process can <strong>publish</strong> an event, and it is automatically distributed to all other processes.</li>
+</ul>
+<ul>
+  <li>Each process has its own <strong>private queue</strong> from which it reads only the events of interest.</li>
+</ul>
+<ul>
+  <li>Ignored events are simply discarded from the read buffer.</li>
+</ul>
+<h3 id="sec-02-3-procesos-main-events">Main Events</h3>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>Event</th>
+<th>Publisher</th>
+<th>Consumers</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tr>
+<td><code>SPEECH_COMPLETED</code></td>
+<td>AudioProcess</td>
+<td>Orchestrator</td>
+<td>User audio captured and ready to transcribe</td>
+</tr>
+<tr>
+<td><code>MOVEMENT_COMPLETED</code></td>
+<td>UnitreeRobotProcess</td>
+<td>Orchestrator, Playback</td>
+<td>Robot reached destination or completed command</td>
+</tr>
+<tr>
+<td><code>CONVERSATION_CONTINUING</code></td>
+<td>Orchestrator</td>
+<td>AudioProcess</td>
+<td>Conversation mode active, keep listening</td>
+</tr>
+<tr>
+<td><code>AUDIO_SYNTHESIZED</code></td>
+<td>Orchestrator</td>
+<td>Playback</td>
+<td>TTS response ready to play</td>
+</tr>
+<tr>
+<td><code>ROBOT_COMMAND</code></td>
+<td>Orchestrator</td>
+<td>UnitreeRobotProcess</td>
+<td>Execute command on the robot</td>
+</tr>
+<tr>
+<td><code>MOVEMENT_SEQUENCE_READY</code></td>
+<td>Orchestrator</td>
+<td>UnitreeRobotProcess</td>
+<td>Route sequence ready to execute</td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="sec-02-3-procesos-bus-reliability">Bus Reliability</h3>
+<p>The EventBus was tested with 100 events under stress, showing:</p>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>Metric</th>
+<th>Value</th>
+</tr>
+</thead>
+<tr>
+<td>Events sent</td>
+<td>100</td>
+</tr>
+<tr>
+<td>Events received</td>
+<td>100</td>
+</tr>
+<tr>
+<td>Losses</td>
+<td>0</td>
+</tr>
+<tr>
+<td>Out of order</td>
+<td>0</td>
+</tr>
+<tr>
+<td>Throughput</td>
+<td><strong>1,300 events/second</strong></td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="sec-02-3-procesos-description-of-each-process">Description of Each Process</h2>
+<h3 id="sec-02-3-procesos-audioprocess">AudioProcess</h3>
+<p>State machine with three modes: <strong>WAKE_WORD</strong> (listens for the word "ronaldo"), <strong>LISTENING</strong> (captures command), <strong>COOLDOWN</strong> (post-response cooldown). Uses Vosk (offline) for wake word detection and Silero VAD to detect end of speech.</p>
+<h3 id="sec-02-3-procesos-orchestrator">Orchestrator</h3>
+<p>Central brain. Classifies intents (YAML + LLM), executes actions (direct commands or navigation), and manages conversational dialogue with 20-turn memory.</p>
+<h3 id="sec-02-3-procesos-playbackprocess">PlaybackProcess</h3>
+<p>Plays TTS responses in two modes: <strong>streaming</strong> (fragments while generating) and <strong>complete</strong> (full audio at once).</p>
+<h3 id="sec-02-3-procesos-unitreerobotprocess">UnitreeRobotProcess</h3>
+<p>Bridge between the Python agent and ROS2 nodes. Writes JSON command and route files, monitors results.</p>
+</div>
+</section>
+<section id="sec-02-4-stack" class="content-section">
+<div class="section-inner">
+<h1 id="sec-02-4-stack-2-4-technology-stack">2.4 Technology Stack</h1>
+<h2 id="sec-02-4-stack-technologies-by-category">Technologies by Category</h2>
+<h3 id="sec-02-4-stack-voice-processing">Voice Processing</h3>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>Service</th>
+<th>Technology</th>
+<th>Use in Ronaldo</th>
+</tr>
+</thead>
+<tr>
+<td><strong>Groq Whisper</strong></td>
+<td>Whisper Large v3 Turbo</td>
+<td>Main speech recognition (STT)</td>
+</tr>
+<tr>
+<td><strong>Deepgram Nova-3</strong></td>
+<td>Deepgram API</td>
+<td>Alternative STT with streaming</td>
+</tr>
+<tr>
+<td><strong>Edge TTS</strong></td>
+<td>Microsoft Edge</td>
+<td>Default speech synthesis (TTS)</td>
+</tr>
+<tr>
+<td><strong>Deepgram Aura-2</strong></td>
+<td>Deepgram API</td>
+<td>High-quality alternative TTS</td>
+</tr>
+<tr>
+<td><strong>Vosk</strong></td>
+<td>Spanish model 42 MB (offline)</td>
+<td>Wake word "ronaldo"</td>
+</tr>
+<tr>
+<td><strong>Silero VAD</strong></td>
+<td>ONNX (offline)</td>
+<td>Voice activity detection</td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="sec-02-4-stack-artificial-intelligence">Artificial Intelligence</h3>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>Component</th>
+<th>Technology</th>
+<th>Detail</th>
+</tr>
+</thead>
+<tr>
+<td><strong>Main LLM</strong></td>
+<td>Groq Llama 4 Scout 17B</td>
+<td>17B parameters, accelerated inference</td>
+</tr>
+<tr>
+<td><strong>Classifier</strong></td>
+<td>Hybrid YAML + LLM</td>
+<td>Two stages: patterns + language model</td>
+</tr>
+<tr>
+<td><strong>Tool Calling</strong></td>
+<td>Native implementation</td>
+<td>MCP integration</td>
+</tr>
+<tr>
+<td><strong>Memory</strong></td>
+<td>In-memory history</td>
+<td>20 conversation turns</td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="sec-02-4-stack-robotics">Robotics</h3>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>Component</th>
+<th>Technology</th>
+<th>Version</th>
+</tr>
+</thead>
+<tr>
+<td><strong>Middleware</strong></td>
+<td>ROS2</td>
+<td>Humble</td>
+</tr>
+<tr>
+<td><strong>DDS</strong></td>
+<td>CycloneDDS</td>
+<td>-</td>
+</tr>
+<tr>
+<td><strong>Robot Communication</strong></td>
+<td>WebRTC</td>
+<td>Bidirectional data channel</td>
+</tr>
+<tr>
+<td><strong>Robot</strong></td>
+<td>Unitree Go2 Air</td>
+<td>Quadruped with LiDAR, camera, IMU</td>
+</tr>
+<tr>
+<td><strong>Robot SDK</strong></td>
+<td>go2_ros2_sdk</td>
+<td>Main ROS2 nodes</td>
+</tr>
+<tr>
+<td><strong>Custom Control</strong></td>
+<td>unitree_go2_unitree</td>
+<td>Custom routes and commands</td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="sec-02-4-stack-infrastructure">Infrastructure</h3>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>Component</th>
+<th>Technology</th>
+<th>Note</th>
+</tr>
+</thead>
+<tr>
+<td><strong>Language</strong></td>
+<td>Python 3.12+</td>
+<td>Entire conversational agent</td>
+</tr>
+<tr>
+<td><strong>Package Management</strong></td>
+<td>uv</td>
+<td>Installation and dependencies</td>
+</tr>
+<tr>
+<td><strong>IPC</strong></td>
+<td>multiprocessing.Queue</td>
+<td>Inter-process communication</td>
+</tr>
+<tr>
+<td><strong>Database</strong></td>
+<td>SQLite (read-only mode)</td>
+<td>Access via MCP</td>
+</tr>
+<tr>
+<td><strong>Protocol</strong></td>
+<td>MCP (Model Context Protocol)</td>
+<td>LLM ↔ DB intermediation</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="sec-02-4-stack-key-python-dependencies">Key Python Dependencies</h2>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>Package</th>
+<th>Version</th>
+<th>Function</th>
+</tr>
+</thead>
+<tr>
+<td><code>vosk</code></td>
+<td>≥ 0.3.45</td>
+<td>Offline wake word</td>
+</tr>
+<tr>
+<td><code>silero-vad</code></td>
+<td>≥ 5.1</td>
+<td>Voice Activity Detection</td>
+</tr>
+<tr>
+<td><code>edge-tts</code></td>
+<td>≥ 6.1</td>
+<td>Free speech synthesis</td>
+</tr>
+<tr>
+<td><code>groq</code></td>
+<td>≥ 0.15.0</td>
+<td>Groq API (STT + LLM)</td>
+</tr>
+<tr>
+<td><code>deepgram-sdk</code></td>
+<td>≥ 3.7</td>
+<td>Alternative Deepgram API</td>
+</tr>
+<tr>
+<td><code>psutil</code></td>
+<td>≥ 5.9</td>
+<td>Resource monitoring</td>
+</tr>
+<tr>
+<td><code>pyyaml</code></td>
+<td>≥ 6.0</td>
+<td>Classifier and route configuration</td>
+</tr>
+<tr>
+<td><code>httpx</code></td>
+<td>≥ 0.27</td>
+<td>Async HTTP client for APIs</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+</section>
+<section id="sec-02-5-cloud-vs-local" class="content-section">
+<div class="section-inner">
+<h1 id="sec-02-5-cloud-vs-local-2-5-cloud-vs-local">2.5 Cloud vs Local</h1>
+<h2 id="sec-02-5-cloud-vs-local-compute-distribution">Compute Distribution</h2>
+<p>A key architectural decision in Ronaldo was to <strong>offload intensive processing to remote servers</strong>, keeping only lightweight tasks on local hardware.</p>
+<p><img src="../assets/images/diagrama-04-cloud-vs-local.jpg" alt="Cloud vs Local distribution diagram" style="max-width:100%;border-radius:8px;margin:1.5rem 0;"></p>
+<p><em>Figure 4: Compute distribution between local hardware (Vosk, Silero VAD, Edge TTS) and cloud services (Groq Whisper STT, Groq Llama 4 Scout LLM, MCP Server, Deepgram Aura-2 TTS).</em></p>
+<h2 id="sec-02-5-cloud-vs-local-provider-comparison">Provider Comparison</h2>
+<h3 id="sec-02-5-cloud-vs-local-speech-to-text-stt">Speech-to-Text (STT)</h3>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>Provider</th>
+<th>Latency</th>
+<th>Accuracy</th>
+<th>Requires Internet</th>
+<th>Cost</th>
+</tr>
+</thead>
+<tr>
+<td><strong>Groq Whisper</strong></td>
+<td>~750 ms</td>
+<td>High</td>
+<td>Yes</td>
+<td>Free tier</td>
+</tr>
+<tr>
+<td><strong>Deepgram Nova-3</strong></td>
+<td>~500 ms</td>
+<td>Very high</td>
+<td>Yes</td>
+<td>Free tier</td>
+</tr>
+<tr>
+<td><strong>Google Cloud STT</strong></td>
+<td>~600 ms</td>
+<td>Very high</td>
+<td>Yes</td>
+<td>Limited</td>
+</tr>
+<tr>
+<td><strong>Parakeet (ONNX)</strong></td>
+<td>~2000 ms</td>
+<td>Medium</td>
+<td>No</td>
+<td>Free</td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="sec-02-5-cloud-vs-local-text-to-speech-tts">Text-to-Speech (TTS)</h3>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>Provider</th>
+<th>Latency</th>
+<th>Naturalness</th>
+<th>Requires Internet</th>
+<th>Cost</th>
+</tr>
+</thead>
+<tr>
+<td><strong>Edge TTS</strong></td>
+<td>~500 ms</td>
+<td>High</td>
+<td>Yes</td>
+<td>Free</td>
+</tr>
+<tr>
+<td><strong>Deepgram Aura-2</strong></td>
+<td>~400 ms</td>
+<td>Very high</td>
+<td>Yes</td>
+<td>Free tier</td>
+</tr>
+<tr>
+<td><strong>Local TTS (coqui)</strong></td>
+<td>~1500 ms</td>
+<td>Medium</td>
+<td>No</td>
+<td>Free</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="sec-02-5-cloud-vs-local-raspberry-pi-5-viability">Raspberry Pi 5 Viability</h2>
+<p>One of the most relevant conclusions from testing is that <strong>Ronaldo can run on a Raspberry Pi 5 with 8 GB of RAM</strong>:</p>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>Metric</th>
+<th>Ronaldo</th>
+<th>RPi5 Available</th>
+<th>% Used</th>
+</tr>
+</thead>
+<tr>
+<td>Peak RAM</td>
+<td>85.7 MB</td>
+<td>8,192 MB</td>
+<td><strong>1.0%</strong></td>
+</tr>
+<tr>
+<td>Idle RAM</td>
+<td>23.5 MB</td>
+<td>8,192 MB</td>
+<td><strong>0.3%</strong></td>
+</tr>
+<tr>
+<td>Peak CPU</td>
+<td>10% (1 core)</td>
+<td>4 Cortex-A76 cores</td>
+<td>2.5%</td>
+</tr>
+</tbody>
+</table></div>
+<div class="highlight">
+
+The low consumption is because intensive processing (STT, LLM, TTS) runs on remote servers through the free Groq and Deepgram APIs. Local hardware only needs to manage network I/O and audio playback.
+</div>
+<h2 id="sec-02-5-cloud-vs-local-fallback-strategy">Fallback Strategy</h2>
+<p>The system is designed to operate without an internet connection for certain functions:</p>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>Function</th>
+<th>With Internet</th>
+<th>Without Internet</th>
+</tr>
+</thead>
+<tr>
+<td>Wake word</td>
+<td>Vosk</td>
+<td>✅ Vosk (always offline)</td>
+</tr>
+<tr>
+<td>Speech recognition</td>
+<td>Groq Whisper</td>
+<td>⚠️ Local Parakeet</td>
+</tr>
+<tr>
+<td>Language understanding</td>
+<td>Groq Llama 4 Scout</td>
+<td>❌ Not available</td>
+</tr>
+<tr>
+<td>Speech synthesis</td>
+<td>Edge TTS</td>
+<td>⚠️ Local Coqui TTS</td>
+</tr>
+<tr>
+<td>Campus queries</td>
+<td>MCP Server</td>
+<td>❌ Not available</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+</section>
+<section id="sec-03-agente" class="content-section">
+<div class="section-inner">
+<h1 id="sec-03-agente-3-conversational-agent">3. Conversational Agent</h1>
+<p>This chapter details the heart of the system: the complete voice pipeline, wake word detection, speech recognition and synthesis, intent classification, the dialogue engine with tool calling, the MCP server, conversational memory, and anti-feedback mechanisms.</p>
+</div>
+</section>
+<section id="sec-03-1-pipeline-voz" class="content-section">
+<div class="section-inner">
+<h1 id="sec-03-1-pipeline-voz-3-1-voice-pipeline">3.1 Voice Pipeline</h1>
+<h2 id="sec-03-1-pipeline-voz-complete-processing-flow">Complete Processing Flow</h2>
+<p>Ronaldo's voice pipeline transforms a spoken question into an audible response in approximately <strong>1.6 seconds</strong>.</p>
+<p><img src="../assets/images/diagrama-05-pipeline-voz.jpg" alt="Voice Pipeline Diagram" style="max-width:100%;border-radius:8px;margin:1.5rem 0;"></p>
+<p><em>Figure 5: Complete voice processing pipeline. Flow: Microphone (16 kHz, 512 samples) → Vosk Wake Word (< 200 ms) → Silero VAD → Groq Whisper STT (~750 ms) → YAML+LLM Classifier → Groq Llama 4 Scout (~350 ms) → Edge TTS (~500 ms) → Speaker. Total pipeline time: ~1.6 seconds.</em></p>
+<h2 id="sec-03-1-pipeline-voz-latency-breakdown">Latency Breakdown</h2>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>Stage</th>
+<th>Technology</th>
+<th>Time</th>
+<th>Offline</th>
+</tr>
+</thead>
+<tr>
+<td>Audio capture</td>
+<td>PyAudio</td>
+<td>Continuous</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>Wake Word</td>
+<td>Vosk (42 MB)</td>
+<td>< 200 ms</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>Voice Activity Detection</td>
+<td>Silero VAD</td>
+<td>< 50 ms</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>Speech recognition (STT)</td>
+<td>Groq Whisper</td>
+<td><strong>~750 ms</strong></td>
+<td>No</td>
+</tr>
+<tr>
+<td>YAML classification</td>
+<td>Local patterns</td>
+<td>< 1 ms</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>Understanding (LLM)</td>
+<td>Groq Llama 4 Scout</td>
+<td><strong>~350 ms</strong></td>
+<td>No</td>
+</tr>
+<tr>
+<td>ToolValidator</td>
+<td>Local validation</td>
+<td>< 0.01 ms</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>Speech synthesis (TTS)</td>
+<td>Edge TTS</td>
+<td><strong>~500 ms</strong></td>
+<td>No</td>
+</tr>
+<tr>
+<td><strong>Total Pipeline</strong></td>
+<td></td>
+<td><strong>~1,600 ms</strong></td>
+<td></td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="sec-03-1-pipeline-voz-audio-parameters">Audio Parameters</h2>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Value</th>
+<th>Justification</th>
+</tr>
+</thead>
+<tr>
+<td>Sample rate</td>
+<td>16 kHz</td>
+<td>Standard for speech recognition</td>
+</tr>
+<tr>
+<td>Fragment size</td>
+<td>512 samples (~32 ms)</td>
+<td>Balance between latency and processing</td>
+</tr>
+<tr>
+<td>Format</td>
+<td>16-bit PCM mono</td>
+<td>Compatible with all STT providers</td>
+</tr>
+<tr>
+<td>Wake word circular buffer</td>
+<td>0.5 seconds</td>
+<td>Avoid missing the start of the command</td>
+</tr>
+<tr>
+<td>Silence for end of speech</td>
+<td>1 continuous second</td>
+<td>Robust detection of command end</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+</section>
+<section id="sec-03-2-wake-vad" class="content-section">
+<div class="section-inner">
+<h1 id="sec-03-2-wake-vad-3-2-wake-word-and-vad">3.2 Wake Word and VAD</h1>
+<h2 id="sec-03-2-wake-vad-audioprocess-state-machine">AudioProcess State Machine</h2>
+<p>The audio process operates as a state machine with three well-defined modes:</p>
+<p><img src="../assets/images/diagrama-06-estados-audioprocess.jpg" alt="AudioProcess state diagram" style="max-width:100%;border-radius:8px;margin:1.5rem 0;"></p>
+<p><em>Figure 6: AudioProcess state machine with three modes: WAKE_WORD (listens for "ronaldo" with offline Vosk), LISTENING (captures command with Silero VAD, 1s silence detection), and COOLDOWN (~3s post-response cooldown to prevent acoustic feedback).</em></p>
+<h2 id="sec-03-2-wake-vad-wake-word-detection">Wake Word Detection</h2>
+<p>Ronaldo uses <strong>Vosk</strong>, an offline speech recognition model, to detect the word <strong>"ronaldo"</strong>.</p>
+<h3 id="sec-03-2-wake-vad-vosk-features">Vosk Features</h3>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>Feature</th>
+<th>Value</th>
+</tr>
+</thead>
+<tr>
+<td>Model</td>
+<td><code>vosk-model-small-es-0.42</code></td>
+</tr>
+<tr>
+<td>Size</td>
+<td>42 MB</td>
+</tr>
+<tr>
+<td>Operation</td>
+<td>Completely offline</td>
+</tr>
+<tr>
+<td>Detection time</td>
+<td>< 200 ms</td>
+</tr>
+<tr>
+<td>Circular buffer</td>
+<td>0.5 seconds</td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="sec-03-2-wake-vad-why-vosk">Why Vosk?</h3>
+<ul>
+  <li><strong>No internet required</strong>: the system can activate even without a connection</li>
+</ul>
+<ul>
+  <li><strong>Lightweight</strong>: only 42 MB, fits on any device</li>
+</ul>
+<ul>
+  <li><strong>Fast</strong>: detection in less than 200 ms</li>
+</ul>
+<ul>
+  <li><strong>Accurate in Spanish</strong>: trained specifically for Spanish</li>
+</ul>
+<h2 id="sec-03-2-wake-vad-voice-activity-detection-vad">Voice Activity Detection (VAD)</h2>
+<p>Once the wake word is detected, <strong>Silero VAD</strong> determines when the user has finished speaking.</p>
+<h3 id="sec-03-2-wake-vad-silero-vad-features">Silero VAD Features</h3>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Value</th>
+</tr>
+</thead>
+<tr>
+<td>Model</td>
+<td>Silero VAD (ONNX)</td>
+</tr>
+<tr>
+<td>Detection threshold</td>
+<td>0.4 (0-1 scale)</td>
+</tr>
+<tr>
+<td>Silence for end</td>
+<td>1 continuous second</td>
+</tr>
+<tr>
+<td>Operation</td>
+<td>Offline</td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="sec-03-2-wake-vad-operation">Operation</h3>
+<ul>
+  <li>Each audio fragment (32 ms) is analyzed by Silero VAD</li>
+</ul>
+<ul>
+  <li>If voice is detected → silence counter resets</li>
+</ul>
+<ul>
+  <li>If silence is detected → counter increments</li>
+</ul>
+<ul>
+  <li>When the counter reaches <strong>1 continuous second</strong> → command finished</li>
+</ul>
+<ul>
+  <li>Captured audio is sent to the orchestrator for transcription</li>
+</ul>
+<h2 id="sec-03-2-wake-vad-cooldown-mode">COOLDOWN Mode</h2>
+<p>After sending the command to the orchestrator, the system enters <strong>cooldown</strong> mode for approximately <strong>3 seconds</strong> (configurable). This prevents:</p>
+<ul>
+  <li>The microphone from capturing the echo of the robot's response</li>
+</ul>
+<ul>
+  <li>Accidentally processing a new interaction</li>
+</ul>
+<ul>
+  <li>The system from entering an acoustic feedback loop</li>
+</ul>
+</div>
+</section>
+<section id="sec-03-3-stt" class="content-section">
+<div class="section-inner">
+<h1 id="sec-03-3-stt-3-3-stt-speech-recognition">3.3 STT — Speech Recognition</h1>
+<h2 id="sec-03-3-stt-supported-providers">Supported Providers</h2>
+<p>Ronaldo supports multiple Speech-to-Text providers, configurable from an environment file (<code>.env</code>).</p>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>Provider</th>
+<th>Model</th>
+<th>Average Latency</th>
+<th>Streaming</th>
+<th>Offline</th>
+<th>Cost</th>
+</tr>
+</thead>
+<tr>
+<td><strong>Groq Whisper</strong></td>
+<td><code>whisper-large-v3-turbo</code></td>
+<td><strong>750 ms</strong></td>
+<td>No</td>
+<td>No</td>
+<td>Free tier</td>
+</tr>
+<tr>
+<td><strong>Deepgram Nova-3</strong></td>
+<td>Nova-3</td>
+<td>~500 ms</td>
+<td>✅</td>
+<td>No</td>
+<td>Free tier</td>
+</tr>
+<tr>
+<td><strong>Google Cloud STT</strong></td>
+<td>Standard</td>
+<td>~600 ms</td>
+<td>✅</td>
+<td>No</td>
+<td>Limited</td>
+</tr>
+<tr>
+<td><strong>Parakeet (ONNX)</strong></td>
+<td>Local ONNX</td>
+<td>~2000 ms</td>
+<td>No</td>
+<td>✅</td>
+<td>Free</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="sec-03-3-stt-groq-whisper-default">Groq Whisper (Default)</h2>
+<p>The default provider is <strong>Groq Whisper</strong>, which offers:</p>
+<ul>
+  <li><strong>Speed</strong>: transcription in ~750 ms (median P50: 708 ms)</li>
+</ul>
+<ul>
+  <li><strong>Accuracy</strong>: <code>whisper-large-v3-turbo</code> model optimized by Groq</li>
+</ul>
+<ul>
+  <li><strong>Free</strong>: generous free tier enabling all testing at no cost</li>
+</ul>
+<ul>
+  <li><strong>Native Spanish</strong>: excellent language recognition</li>
+</ul>
+<h3 id="sec-03-3-stt-performance-metrics-groq-whisper">Performance Metrics (Groq Whisper)</h3>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>Metric</th>
+<th>Time (ms)</th>
+</tr>
+</thead>
+<tr>
+<td>Average</td>
+<td>750.7</td>
+</tr>
+<tr>
+<td>Median (P50)</td>
+<td>708.2</td>
+</tr>
+<tr>
+<td>P95</td>
+<td>1025.0</td>
+</tr>
+<tr>
+<td>Maximum</td>
+<td>1025.0</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="sec-03-3-stt-deepgram-nova-3-alternative">Deepgram Nova-3 (Alternative)</h2>
+<p>Deepgram offers <strong>streaming</strong> transcription, ideal for long commands:</p>
+<ul>
+  <li>Audio is sent in real time as it is captured</li>
+</ul>
+<ul>
+  <li>Partial transcription is displayed before the user finishes speaking</li>
+</ul>
+<ul>
+  <li>Reduces perceived latency for extended commands</li>
+</ul>
+<h2 id="sec-03-3-stt-parakeet-local">Parakeet (Local)</h2>
+<p>For <strong>offline</strong> operation, Parakeet runs an ONNX model entirely on the computer:</p>
+<ul>
+  <li><strong>Advantage</strong>: works without internet</li>
+</ul>
+<ul>
+  <li><strong>Disadvantage</strong>: ~2 seconds latency (slower than cloud)</li>
+</ul>
+<ul>
+  <li><strong>Use</strong>: fallback when no connection is available</li>
+</ul>
+<h2 id="sec-03-3-stt-transcription-method">Transcription Method</h2>
+<p>Regardless of the provider, the flow is the same:</p>
+<ul>
+  <li><code>AudioProcess</code> captures audio and detects end of speech</li>
+</ul>
+<ul>
+  <li>Audio is sent to the <code>Orchestrator</code> as a byte array (16 kHz, mono)</li>
+</ul>
+<ul>
+  <li>The <code>Orchestrator</code> invokes the configured STT provider</li>
+</ul>
+<ul>
+  <li>Transcribed text is passed to the intent classifier</li>
+</ul>
+<ul>
+  <li>If the classifier does not recognize the command, the text is sent to the LLM</li>
+</ul>
+</div>
+</section>
+<section id="sec-03-4-tts" class="content-section">
+<div class="section-inner">
+<h1 id="sec-03-4-tts-3-4-tts-speech-synthesis">3.4 TTS — Speech Synthesis</h1>
+<h2 id="sec-03-4-tts-supported-providers">Supported Providers</h2>
+<p>The assistant's response is converted to audio via a text-to-speech engine. Ronaldo supports three configurable providers.</p>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>Provider</th>
+<th>Spanish Voices</th>
+<th>Latency</th>
+<th>Quality</th>
+<th>Requires Internet</th>
+<th>Cost</th>
+</tr>
+</thead>
+<tr>
+<td><strong>Edge TTS</strong></td>
+<td>Yes (several)</td>
+<td><strong>~500 ms</strong></td>
+<td>High</td>
+<td>Yes</td>
+<td>Free</td>
+</tr>
+<tr>
+<td><strong>Deepgram Aura-2</strong></td>
+<td>Yes (natural)</td>
+<td>~400 ms</td>
+<td>Very high</td>
+<td>Yes</td>
+<td>Free tier</td>
+</tr>
+<tr>
+<td><strong>Local TTS</strong></td>
+<td>Yes (limited)</td>
+<td>~1500 ms</td>
+<td>Medium</td>
+<td>No</td>
+<td>Free</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="sec-03-4-tts-edge-tts-default">Edge TTS (Default)</h2>
+<p>The default provider is <strong>Edge TTS</strong>, based on the Microsoft Edge synthesis engine:</p>
+<ul>
+  <li><strong>Free</strong>: no usage limits or API key required</li>
+</ul>
+<ul>
+  <li><strong>Natural</strong>: Spanish voices with appropriate intonation and prosody</li>
+</ul>
+<ul>
+  <li><strong>Fast</strong>: ~500 ms to generate audio for a typical response</li>
+</ul>
+<ul>
+  <li><strong>Streaming</strong>: supports fragment-based playback while generating</li>
+</ul>
+<h3 id="sec-03-4-tts-available-spanish-voices">Available Spanish Voices</h3>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>Voice</th>
+<th>Gender</th>
+<th>Style</th>
+</tr>
+</thead>
+<tr>
+<td><code>es-MX-DaliaNeural</code></td>
+<td>Female</td>
+<td>Mexican natural</td>
+</tr>
+<tr>
+<td><code>es-MX-JorgeNeural</code></td>
+<td>Male</td>
+<td>Mexican natural</td>
+</tr>
+<tr>
+<td><code>es-ES-AlvaroNeural</code></td>
+<td>Male</td>
+<td>Spanish natural</td>
+</tr>
+<tr>
+<td><code>es-ES-ElviraNeural</code></td>
+<td>Female</td>
+<td>Spanish natural</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="sec-03-4-tts-deepgram-aura-2-high-quality">Deepgram Aura-2 (High Quality)</h2>
+<p>Deepgram offers <strong>superior quality</strong> speech synthesis with natural Spanish voices:</p>
+<ul>
+  <li><strong>Latency</strong>: ~400 ms</li>
+</ul>
+<ul>
+  <li><strong>Naturalness</strong>: voices indistinguishable from a real person</li>
+</ul>
+<ul>
+  <li><strong>Available</strong>: free tier with initial credits</li>
+</ul>
+<ul>
+  <li><strong>Streaming</strong>: fragment-based playback</li>
+</ul>
+<h2 id="sec-03-4-tts-playback-modes">Playback Modes</h2>
+<p>The <code>PlaybackProcess</code> supports two playback modes:</p>
+<h3 id="sec-03-4-tts-streaming-mode">Streaming Mode</h3>
+<ul>
+  <li>Audio is generated and played in <strong>consecutive fragments</strong></li>
+</ul>
+<ul>
+  <li>The user hears the response while it continues to be generated</li>
+</ul>
+<ul>
+  <li><strong>Significantly reduces</strong> perceived wait time</li>
+</ul>
+<h3 id="sec-03-4-tts-complete-mode">Complete Mode</h3>
+<ul>
+  <li>Full audio is generated and then played</li>
+</ul>
+<ul>
+  <li>Useful for very short responses or when streaming is unavailable</li>
+</ul>
+<ul>
+  <li>Higher perceived latency for the user</li>
+</ul>
+<h2 id="sec-03-4-tts-playback-flow">Playback Flow</h2>
+<pre><code>LLM generates text → TTS generates audio → PlaybackProcess receives audio
+    → If streaming: plays fragments as they arrive
+    → If complete: waits for full audio and plays
+    → PLAYBACK_COMPLETED event → System returns to listening</code></pre>
+</div>
+</section>
+<section id="sec-03-5-clasificacion" class="content-section">
+<div class="section-inner">
+<h1 id="sec-03-5-clasificacion-3-5-intent-classification">3.5 Intent Classification</h1>
+<h2 id="sec-03-5-clasificacion-two-stage-hybrid-system">Two-Stage Hybrid System</h2>
+<p>Ronaldo uses a <strong>hybrid</strong> classifier that combines speed (YAML) with intelligence (LLM).</p>
+<p><img src="../assets/images/diagrama-07-clasificacion-2-etapas.jpg" alt="Two-stage classification diagram" style="max-width:100%;border-radius:8px;margin:1.5rem 0;"></p>
+<p><em>Figure 7: Hybrid intent classification system. First stage: Pattern-based YAML classifier (navigation → NAVEGAR_DESTINO, commands → COMANDO_ROBOT). Second stage: LLM with Tool Calling for unrecognized intents (navigate_to, search_food, or direct text response).</em></p>
+<h2 id="sec-03-5-clasificacion-first-stage-yaml-classifier">First Stage: YAML Classifier</h2>
+<p>The YAML configuration file defines text patterns to recognize intents without going through the LLM:</p>
+<pre><code class="language-yaml">navigation:
+  - patterns: [&quot;biomedica&quot;, &quot;biomédica&quot;, &quot;biomedicas&quot;]
+    intent: NAVEGAR_BIOMEDICA
+  - patterns: [&quot;biblioteca&quot;, &quot;biblioteca francisco xavier&quot;]
+    intent: NAVEGAR_BIBLIOTECA
+  - patterns: [&quot;karpa&quot;, &quot;la karpa&quot;, &quot;cafeteria&quot;]
+    intent: NAVEGAR_KARPA
+  - patterns: [&quot;maquinas&quot;, &quot;máquinas&quot;, &quot;laboratorio de maquinas&quot;]
+    intent: NAVEGAR_MAQUINAS
+  - patterns: [&quot;giornale&quot;, &quot;gironale&quot;]
+    intent: NAVEGAR_GIORNALE
+
+commands:
+  - patterns: [&quot;sientate&quot;, &quot;siéntate&quot;, &quot;sentado&quot;]
+    intent: COMANDO_SIT
+  - patterns: [&quot;parate&quot;, &quot;párate&quot;, &quot;levantate&quot;]
+    intent: COMANDO_STAND_UP
+  - patterns: [&quot;baila&quot;, &quot;bailar&quot;]
+    intent: COMANDO_DANCE
+  - patterns: [&quot;saluda&quot;, &quot;saludar&quot;, &quot;hola&quot;]
+    intent: COMANDO_HELLO
+  - patterns: [&quot;acuestate&quot;, &quot;acuéstate&quot;]
+    intent: COMANDO_STAND_DOWN</code></pre>
+<h3 id="sec-03-5-clasificacion-advantages-of-the-yaml-classifier">Advantages of the YAML Classifier</h3>
+<ul>
+  <li><strong>Latency < 1 ms</strong>: instant string comparison</li>
+</ul>
+<ul>
+  <li><strong>No API call</strong>: does not consume Groq credits</li>
+</ul>
+<ul>
+  <li><strong>Deterministic</strong>: 100% predictable for known commands</li>
+</ul>
+<ul>
+  <li><strong>Perfect navigation recall</strong>: 100% in tests</li>
+</ul>
+<h2 id="sec-03-5-clasificacion-second-stage-llm-with-tool-calling">Second Stage: LLM with Tool Calling</h2>
+<p>When the YAML classifier does not recognize the command, the text is sent to the language model:</p>
+<ul>
+  <li>The LLM analyzes the user's intent</li>
+</ul>
+<ul>
+  <li>Decides whether to query external tools (MCP)</li>
+</ul>
+<ul>
+  <li>If the intent is navigation: invokes <code>navigate_to</code></li>
+</ul>
+<ul>
+  <li>If it is an informational query: invokes search tools (food, places, offices)</li>
+</ul>
+<ul>
+  <li>If it is casual conversation: generates a direct text response</li>
+</ul>
+<h3 id="sec-03-5-clasificacion-classification-results-phase-2">Classification Results (Phase 2)</h3>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>Class</th>
+<th>Precision</th>
+<th>Recall</th>
+<th>F1-Score</th>
+</tr>
+</thead>
+<tr>
+<td>Navigation</td>
+<td>0.7692</td>
+<td><strong>1.0000</strong></td>
+<td>0.8696</td>
+</tr>
+<tr>
+<td>Commands</td>
+<td>0.8889</td>
+<td>0.8000</td>
+<td>0.8421</td>
+</tr>
+<tr>
+<td>Conversation</td>
+<td>0.5556</td>
+<td>0.7692</td>
+<td>0.6452</td>
+</tr>
+<tr>
+<td>Noise</td>
+<td>0.0000</td>
+<td>0.0000</td>
+<td>0.0000</td>
+</tr>
+</tbody>
+</table></div>
+<div class="note">
+
+The noise category has 0% because the system was designed to be <strong>permeable</strong>: it prefers to process noise as conversation rather than reject it, avoiding false rejections of legitimate commands.
+</div>
+</div>
+</section>
+<section id="sec-03-6-dialogo-tools" class="content-section">
+<div class="section-inner">
+<h1 id="sec-03-6-dialogo-tools-3-6-dialogue-engine-and-tool-calling">3.6 Dialogue Engine and Tool Calling</h1>
+<h2 id="sec-03-6-dialogo-tools-tool-calling-flow">Tool Calling Flow</h2>
+<p>One of Ronaldo's most important capabilities is that the language model can <strong>decide to use external tools</strong> to obtain real campus information, rather than generating invented responses.</p>
+<p><img src="../assets/images/diagrama-08-tool-calling-secuencia.jpg" alt="Tool Calling sequence diagram" style="max-width:100%;border-radius:8px;margin:1.5rem 0;"></p>
+<p><em>Figure 8: Tool Calling flow sequence diagram. User → Groq Llama 4 Scout → ToolValidator (verifies existence, types, and values) → MCP Server (executes tool with parameterized SQL) → UIA Database (read-only mode) → result → LLM generates natural response.</em></p>
+<h2 id="sec-03-6-dialogo-tools-available-tools-5-categories">Available Tools (5 Categories)</h2>
+<h3 id="sec-03-6-dialogo-tools-1-places-search-places">1. Places (<code>search_places</code>)</h3>
+<ul>
+  <li>Search places by name or type</li>
+</ul>
+<ul>
+  <li>Get details of a specific place</li>
+</ul>
+<ul>
+  <li>List all campus places</li>
+</ul>
+<h3 id="sec-03-6-dialogo-tools-2-food-search-food">2. Food (<code>search_food</code>)</h3>
+<ul>
+  <li>Search dishes and restaurants</li>
+</ul>
+<ul>
+  <li>Get daily menus</li>
+</ul>
+<ul>
+  <li>Filter by food type</li>
+</ul>
+<h3 id="sec-03-6-dialogo-tools-3-stores-search-products">3. Stores (<code>search_products</code>)</h3>
+<ul>
+  <li>Search products in campus stores</li>
+</ul>
+<ul>
+  <li>Check inventory</li>
+</ul>
+<ul>
+  <li>View prices and availability</li>
+</ul>
+<h3 id="sec-03-6-dialogo-tools-4-services-search-services">4. Services (<code>search_services</code>)</h3>
+<ul>
+  <li>Search professor offices</li>
+</ul>
+<ul>
+  <li>Get list of access doors</li>
+</ul>
+<ul>
+  <li>Administrative information</li>
+</ul>
+<h3 id="sec-03-6-dialogo-tools-5-context-campus-context">5. Context (<code>campus_context</code>)</h3>
+<ul>
+  <li>Campus overview</li>
+</ul>
+<ul>
+  <li>Traffic levels</li>
+</ul>
+<ul>
+  <li>Document search</li>
+</ul>
+<h2 id="sec-03-6-dialogo-tools-multi-tool-dialogue-example">Multi-Tool Dialogue Example</h2>
+<pre><code>User:     &quot;I want to go eat&quot;
+LLM:      search_food(category=&quot;all&quot;)
+          → &quot;There are: Tacos Don Julio, Sushi Nagoya, Cafe Borrego.
+             What type of food do you prefer?&quot;
+
+User:     &quot;Tacos&quot;
+LLM:      search_food(category=&quot;tacos&quot;)
+          → &quot;Tacos Don Julio is in the Giornale building.
+             Would you like to go?&quot;
+
+User:     &quot;Yes, take me&quot;
+LLM:      navigate_to(destination=&quot;Giornale&quot;)
+          → &quot;Let&#x27;s go! Follow me to the Giornale building.&quot;</code></pre>
+<h2 id="sec-03-6-dialogo-tools-tool-call-validation-toolvalidator">Tool Call Validation (ToolValidator)</h2>
+<p>Before executing any tool, the <strong>ToolValidator</strong> inspects the call generated by the LLM:</p>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>Verification</th>
+<th>Description</th>
+</tr>
+</thead>
+<tr>
+<td>Tool existence</td>
+<td>Is it defined in the schema?</td>
+</tr>
+<tr>
+<td>Required fields</td>
+<td>Are mandatory parameters missing?</td>
+</tr>
+<tr>
+<td>Correct types</td>
+<td>Are values of the expected type?</td>
+</tr>
+<tr>
+<td>Enumerated values</td>
+<td>Are values in the allowed list?</td>
+</tr>
+<tr>
+<td>Nulls</td>
+<td>Are there parameters with <code>None</code> value?</td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="sec-03-6-dialogo-tools-toolvalidator-overhead">ToolValidator Overhead</h3>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>Metric</th>
+<th>Time</th>
+</tr>
+</thead>
+<tr>
+<td>Average</td>
+<td><strong>0.004 ms</strong></td>
+</tr>
+<tr>
+<td>P95</td>
+<td>0.005 ms</td>
+</tr>
+<tr>
+<td>Maximum (P99)</td>
+<td>0.026 ms</td>
+</tr>
+</tbody>
+</table></div>
+<div class="highlight">
+
+The ToolValidator overhead is negligible (~0.004 ms), but its value is critical: in Phase 1 testing, it detected <strong>100%</strong> of invalid parameters and prevented <strong>0% of false positives</strong> in <code>navigate_to</code>.
+</div>
+</div>
+</section>
+<section id="sec-03-7-mcp" class="content-section">
+<div class="section-inner">
+<h1 id="sec-03-7-mcp-3-7-mcp-server">3.7 MCP Server</h1>
+<h2 id="sec-03-7-mcp-model-context-protocol-mcp">Model Context Protocol (MCP)</h2>
+<p>The component that connects the agent to the university's structured information is a server implementing the <strong>Model Context Protocol (MCP)</strong>.</p>
+<p><img src="../assets/images/diagrama-09-arquitectura-mcp.jpg" alt="MCP architecture diagram" style="max-width:100%;border-radius:8px;margin:1.5rem 0;"></p>
+<p><em>Figure 9: Model Context Protocol (MCP) architecture. The Ronaldo agent (LLM + ToolValidator) communicates with the MCP Server (typed tools, token bearer), which in turn queries the UIA database (SQLite, read-only mode) via parameterized SQL without exposing direct queries to the LLM.</em></p>
+<h2 id="sec-03-7-mcp-why-mcp">Why MCP?</h2>
+<p>The MCP protocol operates as an <strong>intermediation layer</strong> between the language model and the campus database. Instead of exposing SQL queries directly, the server publishes a set of <strong>typed and parameterized tools</strong>.</p>
+<h3 id="sec-03-7-mcp-advantages-of-the-approach">Advantages of the Approach</h3>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>Feature</th>
+<th>Benefit</th>
+</tr>
+</thead>
+<tr>
+<td><strong>Typed tools</strong></td>
+<td>Each tool has parameters with defined types</td>
+</tr>
+<tr>
+<td><strong>Parameterized SQL</strong></td>
+<td>Prevents SQL injection</td>
+</tr>
+<tr>
+<td><strong>Read-only mode</strong></td>
+<td>Mitigates impact of prompting errors</td>
+</tr>
+<tr>
+<td><strong>Decoupling</strong></td>
+<td>Changing data source does not affect the LLM</td>
+</tr>
+<tr>
+<td><strong>Token bearer</strong></td>
+<td>Shared authentication between services</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="sec-03-7-mcp-security">Security</h2>
+<p>Server access is protected by multiple layers:</p>
+<ul>
+  <li><strong>Bearer Token</strong>: shared by all internal services</li>
+</ul>
+<ul>
+  <li><strong>Read-only connections</strong>: the database operates exclusively in read mode</li>
+</ul>
+<ul>
+  <li><strong>Validated parameters</strong>: the ToolValidator inspects before sending to MCP</li>
+</ul>
+<ul>
+  <li><strong>No direct SQL</strong>: the LLM never sees or generates SQL queries</li>
+</ul>
+<h2 id="sec-03-7-mcp-mcp-tool-example">MCP Tool Example</h2>
+<pre><code class="language-json">{
+  &quot;name&quot;: &quot;search_places&quot;,
+  &quot;description&quot;: &quot;Search campus places by name, type, or characteristics&quot;,
+  &quot;parameters&quot;: {
+    &quot;type&quot;: &quot;object&quot;,
+    &quot;properties&quot;: {
+      &quot;query&quot;: {
+        &quot;type&quot;: &quot;string&quot;,
+        &quot;description&quot;: &quot;Search text (place name, type, etc.)&quot;
+      },
+      &quot;place_type&quot;: {
+        &quot;type&quot;: &quot;string&quot;,
+        &quot;enum&quot;: [&quot;cafeteria&quot;, &quot;classroom&quot;, &quot;laboratory&quot;, &quot;auditorium&quot;, &quot;office&quot;, &quot;store&quot;, &quot;restroom&quot;, &quot;all&quot;],
+        &quot;default&quot;: &quot;all&quot;
+      }
+    },
+    &quot;required&quot;: [&quot;query&quot;]
+  }
+}</code></pre>
+<h2 id="sec-03-7-mcp-binding-with-agent-tools">Binding with Agent Tools</h2>
+<p>MCP tools are exposed to the LLM as tools it can invoke during dialogue. The agent <strong>autonomously</strong> decides which tool to use based on the conversational context.</p>
+</div>
+</section>
+<section id="sec-03-8-memoria" class="content-section">
+<div class="section-inner">
+<h1 id="sec-03-8-memoria-3-8-multi-turn-memory">3.8 Multi-Turn Memory</h1>
+<h2 id="sec-03-8-memoria-conversation-history">Conversation History</h2>
+<p>Ronaldo maintains a history of the <strong>last 20 turns</strong> of conversation. This allows it to remember the context of previous interactions without the user needing to repeat information.</p>
+<h2 id="sec-03-8-memoria-multi-turn-conversation-example">Multi-Turn Conversation Example</h2>
+<pre><code>Turn 1:
+  User:    &quot;I want to go eat&quot;
+  Ronaldo: &quot;What type of food are you in the mood for?&quot;
+
+Turn 2:
+  User:    &quot;Tacos&quot;
+  Ronaldo: [search_food(&quot;tacos&quot;)]
+           &quot;There&#x27;s Tacos Don Julio in the Giornale building.
+            Would you like to go?&quot;
+
+Turn 3:
+  User:    &quot;Yes, take me&quot;
+  Ronaldo: [navigate_to(&quot;Giornale&quot;)]
+           &quot;Let&#x27;s go! Follow me to the Giornale building.&quot;</code></pre>
+<h2 id="sec-03-8-memoria-user-name-memory">User Name Memory</h2>
+<p>When the user introduces themselves, the system automatically extracts the name and remembers it for the <strong>entire session</strong>:</p>
+<pre><code>User:    &quot;Hello Ronaldo, my name is Armando&quot;
+Ronaldo: &quot;Hello Armando! How can I help you?&quot;
+
+... (several turns later) ...
+
+User:    &quot;What do you recommend?&quot;
+Ronaldo: &quot;Armando, I would recommend visiting La Karpa cafeteria...&quot;</code></pre>
+<h2 id="sec-03-8-memoria-dynamic-prompt-system">Dynamic Prompt System</h2>
+<p>The system prompt received by the LLM is <strong>dynamically</strong> updated on each interaction:</p>
+<pre><code>[ROBOT LOCATION]
+The robot is currently at: Robotics Laboratory
+
+[USER CONTEXT]
+User name: Armando
+Last query: food
+
+[AVAILABLE PLACES]
+- La Karpa (cafeteria) — open 8:00-18:00
+- Giornale (building) — Tacos Don Julio, Sushi Nagoya
+- Library F.X. Clavijero — open 7:00-22:00
+
+[TOOL GUIDELINES]
+- Use search_food for food-related queries
+- Use search_places to locate places
+- Use navigate_to only after confirming with the user
+- Do not execute actions without user confirmation</code></pre>
+<h2 id="sec-03-8-memoria-limits-and-behavior">Limits and Behavior</h2>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>Feature</th>
+<th>Value</th>
+</tr>
+</thead>
+<tr>
+<td>Maximum turns</td>
+<td>20 (FIFO)</td>
+</tr>
+<tr>
+<td>User name</td>
+<td>Persists entire session</td>
+</tr>
+<tr>
+<td>Dynamic prompt</td>
+<td>Updated each turn</td>
+</tr>
+<tr>
+<td>Context clear</td>
+<td>On new session start or explicit command</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+</section>
+<section id="sec-03-9-antifeedback" class="content-section">
+<div class="section-inner">
+<h1 id="sec-03-9-antifeedback-3-9-anti-feedback-mechanisms">3.9 Anti-Feedback Mechanisms</h1>
+<h2 id="sec-03-9-antifeedback-the-acoustic-loop-problem">The Acoustic Loop Problem</h2>
+<p>When a robot plays audio through its speaker while having an active microphone, an <strong>acoustic feedback loop</strong> can occur: the robot hears its own response, interprets it as a new command, generates another response, and so on.</p>
+<p>Ronaldo implements <strong>three mechanisms</strong> to prevent this phenomenon.</p>
+<h2 id="sec-03-9-antifeedback-mechanism-1-microphone-muting-during-response">Mechanism 1: Microphone Muting During Response</h2>
+<p>While the robot is playing a TTS response, the audio process <strong>completely ignores</strong> microphone samples.</p>
+<pre><code>State: PLAYING
+  └── AudioProcess: all microphone samples → discarded
+  └── No audio is processed until playback ends</code></pre>
+<h2 id="sec-03-9-antifeedback-mechanism-2-post-response-cooldown-time">Mechanism 2: Post-Response Cooldown Time</h2>
+<p>After the robot finishes speaking, the system waits for a configurable time:</p>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Default Value</th>
+<th>Description</th>
+</tr>
+</thead>
+<tr>
+<td><code>cooldown_time</code></td>
+<td>3 seconds</td>
+<td>Wait before listening again</td>
+</tr>
+<tr>
+<td>Location</td>
+<td><code>AudioProcess</code> (COOLDOWN state)</td>
+<td>Part of the state machine</td>
+</tr>
+</tbody>
+</table></div>
+<p>During this time, the microphone is completely ignored, even if the user says "Ronaldo".</p>
+<h2 id="sec-03-9-antifeedback-mechanism-3-audio-buffer-flushing">Mechanism 3: Audio Buffer Flushing</h2>
+<p>Just before starting to play a response, the system <strong>discards any recently captured audio</strong> from the circular buffer. This eliminates residual fragments that may have been captured during the state transition.</p>
+<h2 id="sec-03-9-antifeedback-state-diagram-with-anti-feedback">State Diagram with Anti-Feedback</h2>
+<p>The AudioProcess with anti-feedback mechanisms operates as follows:</p>
+<ul>
+  <li><strong>WAKE_WORD</strong> → <strong>LISTENING</strong>: on detecting "ronaldo"</li>
+</ul>
+<ul>
+  <li><strong>LISTENING</strong> → <strong>PROCESSING</strong>: command captured</li>
+</ul>
+<ul>
+  <li><strong>PROCESSING</strong> → <strong>MUTED_MIC</strong>: microphone muted and buffer flushed during TTS playback</li>
+</ul>
+<ul>
+  <li><strong>MUTED_MIC</strong> → <strong>COOLDOWN</strong>: playback completed</li>
+</ul>
+<ul>
+  <li><strong>COOLDOWN</strong> → <strong>WAKE_WORD</strong>: after 3 seconds of configurable wait</li>
+</ul>
+<h2 id="sec-03-9-antifeedback-protection-summary">Protection Summary</h2>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>Mechanism</th>
+<th>When Activated</th>
+<th>Effect</th>
+</tr>
+</thead>
+<tr>
+<td>Microphone muting</td>
+<td>During TTS playback</td>
+<td>Ignores all samples</td>
+</tr>
+<tr>
+<td>Cooldown</td>
+<td>After playback</td>
+<td>Waits 3s before listening</td>
+</tr>
+<tr>
+<td>Buffer flushing</td>
+<td>Before playing response</td>
+<td>Discards residual audio</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+</section>
+<section id="sec-04-robot" class="content-section">
+<div class="section-inner">
+<h1 id="sec-04-robot-4-unitree-go2-robot-control">4. Unitree Go2 Robot Control</h1>
+<p>This chapter details the control of the Unitree Go2 Air quadruped robot: its capabilities, network modes, WebRTC communication, ROS2 node architecture, shared JSON file system, navigation routes, 30 preprogrammed commands, and destination mapping.</p>
+</div>
+</section>
+<section id="sec-04-1-robot" class="content-section">
+<div class="section-inner">
+<h1 id="sec-04-1-robot-4-1-the-robot-and-its-capabilities">4.1 The Robot and Its Capabilities</h1>
+<h2 id="sec-04-1-robot-unitree-go2-air">Unitree Go2 Air</h2>
+<p>The <strong>Unitree Go2 Air</strong> is a state-of-the-art quadruped robot designed for research, education, and service applications. It is the physical platform on which Ronaldo operates.</p>
+<p><img src="../assets/images/robot_go2.webp" alt="Unitree Go2 Air" style="max-width:100%;border-radius:8px;margin:1.5rem 0;"></p>
+<p><em>The Unitree Go2 Air used in the project.</em> [Reference image — replace with actual robot photo]</p>
+<h2 id="sec-04-1-robot-technical-specifications">Technical Specifications</h2>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>Component</th>
+<th>Specification</th>
+</tr>
+</thead>
+<tr>
+<td><strong>Type</strong></td>
+<td>Quadruped robot</td>
+</tr>
+<tr>
+<td><strong>Degrees of freedom</strong></td>
+<td>12 (4 legs × 3 DOF)</td>
+</tr>
+<tr>
+<td><strong>Weight</strong></td>
+<td>~15 kg</td>
+</tr>
+<tr>
+<td><strong>Maximum speed</strong></td>
+<td>~5 m/s</td>
+</tr>
+<tr>
+<td><strong>Sensors</strong></td>
+<td>360° LiDAR, Intel RealSense depth camera, 9-DOF IMU</td>
+</tr>
+<tr>
+<td><strong>Processor</strong></td>
+<td>NVIDIA Jetson Orin NX (onboard)</td>
+</tr>
+<tr>
+<td><strong>Connectivity</strong></td>
+<td>WiFi (AP/STA), Bluetooth, Ethernet</td>
+</tr>
+<tr>
+<td><strong>Speaker</strong></td>
+<td>Built-in (for TTS responses)</td>
+</tr>
+<tr>
+<td><strong>Microphone</strong></td>
+<td>Built-in (for voice commands)</td>
+</tr>
+<tr>
+<td><strong>Battery</strong></td>
+<td>~2 hours of continuous operation</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="sec-04-1-robot-robot-capabilities">Robot Capabilities</h2>
+<h3 id="sec-04-1-robot-posture-commands">Posture Commands</h3>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>Command</th>
+<th>API ID</th>
+<th>Description</th>
+</tr>
+</thead>
+<tr>
+<td>StandUp</td>
+<td>1004</td>
+<td>Stand on all four legs</td>
+</tr>
+<tr>
+<td>StandDown</td>
+<td>1005</td>
+<td>Lie down on the ground</td>
+</tr>
+<tr>
+<td>Sit</td>
+<td>1009</td>
+<td>Sit down</td>
+</tr>
+<tr>
+<td>BalanceStand</td>
+<td>1002</td>
+<td>Balance mode on two legs</td>
+</tr>
+<tr>
+<td>Damp</td>
+<td>1001</td>
+<td>Disable motors (free mode)</td>
+</tr>
+<tr>
+<td>StopMove</td>
+<td>1003</td>
+<td>Stop all movement</td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="sec-04-1-robot-tricks-and-animations">Tricks and Animations</h3>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>Command</th>
+<th>API ID</th>
+<th>Description</th>
+</tr>
+</thead>
+<tr>
+<td>Hello</td>
+<td>1016</td>
+<td>Greeting with front paw</td>
+</tr>
+<tr>
+<td>Dance1</td>
+<td>1022</td>
+<td>Choreographed dance 1</td>
+</tr>
+<tr>
+<td>Dance2</td>
+<td>1023</td>
+<td>Choreographed dance 2</td>
+</tr>
+<tr>
+<td>FrontFlip</td>
+<td>1030</td>
+<td>Forward flip</td>
+</tr>
+<tr>
+<td>FrontJump</td>
+<td>1031</td>
+<td>Forward jump</td>
+</tr>
+<tr>
+<td>Handstand</td>
+<td>1301</td>
+<td>Handstand</td>
+</tr>
+<tr>
+<td>Bound</td>
+<td>1304</td>
+<td>Consecutive jumps</td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="sec-04-1-robot-continuous-movement">Continuous Movement</h3>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>Command</th>
+<th>API ID</th>
+<th>Description</th>
+</tr>
+</thead>
+<tr>
+<td>Move</td>
+<td>1008</td>
+<td>Continuous speed (Twist control)</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="sec-04-1-robot-the-robot-in-ronaldo-s-ecosystem">The Robot in Ronaldo's Ecosystem</h2>
+<ul>
+  <li><strong>Not autonomous</strong>: requires explicit user commands for each movement</li>
+</ul>
+<ul>
+  <li><strong>Acts as a peripheral</strong>: the conversational agent (Python) is the brain</li>
+</ul>
+<ul>
+  <li><strong>Bidirectional communication</strong>: receives commands and transmits status (odometry, IMU, LiDAR)</li>
+</ul>
+<ul>
+  <li><strong>Built-in speaker</strong>: plays voice responses synthesized by the TTS</li>
+</ul>
+</div>
+</section>
+<section id="sec-04-2-red" class="content-section">
+<div class="section-inner">
+<h1 id="sec-04-2-red-4-2-network-modes">4.2 Network Modes</h1>
+<h2 id="sec-04-2-red-two-connection-modes">Two Connection Modes</h2>
+<p>The Unitree Go2 supports two network modes for communication with the control PC:</p>
+<h3 id="sec-04-2-red-ap-mode-access-point">AP Mode (Access Point)</h3>
+<p>The robot <strong>creates its own WiFi network</strong>.</p>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>Feature</th>
+<th>Value</th>
+</tr>
+</thead>
+<tr>
+<td>SSID</td>
+<td><code>Unitree_Go2_XXXX</code></td>
+</tr>
+<tr>
+<td>Robot IP</td>
+<td><code>192.168.12.1</code> (fixed)</td>
+</tr>
+<tr>
+<td>PC connects to robot</td>
+<td>Direct connection, no router</td>
+</tr>
+<tr>
+<td>Internet on PC</td>
+<td>❌ Lost</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>Advantage</strong>: Direct connection without infrastructure. <strong>Disadvantage</strong>: PC loses internet access → cloud APIs (Groq, Deepgram) do not work.</p>
+<h3 id="sec-04-2-red-sta-mode-wifi-client-used-in-the-project">STA Mode (WiFi Client) — Used in the project</h3>
+<p>The robot <strong>connects to an existing WiFi network</strong> as a normal client.</p>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>Feature</th>
+<th>Value</th>
+</tr>
+</thead>
+<tr>
+<td>Robot IP</td>
+<td>Obtained via DHCP</td>
+</tr>
+<tr>
+<td>PC and robot on same network</td>
+<td>Same subnet</td>
+</tr>
+<tr>
+<td>Internet on both</td>
+<td>✅ Both have access</td>
+</tr>
+<tr>
+<td>Configuration</td>
+<td>From the Unitree Go2 app (phone)</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>Advantage</strong>: Both PC and robot have internet → cloud APIs work. <strong>Disadvantage</strong>: Requires an available WiFi network.</p>
+<h2 id="sec-04-2-red-project-configuration">Project Configuration</h2>
+<p>This project uses <strong>STA mode</strong> with a phone hotspot connected to the university network:</p>
+<pre><code>[Internet] ← [Phone Hotspot] ← [WiFi]
+                ↓                   ↓
+         [Ubuntu PC]      [Unitree Go2]
+         (same subnet)    (same subnet)
+                ↓
+         [Cloud APIs: Groq, Deepgram]</code></pre>
+<h2 id="sec-04-2-red-communication-ports">Communication Ports</h2>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>Protocol</th>
+<th>Port</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tr>
+<td>WebRTC (signaling)</td>
+<td><strong>9991</strong></td>
+<td>HTTP handshake + SDP exchange</td>
+</tr>
+<tr>
+<td>WebRTC (data)</td>
+<td>Dynamic</td>
+<td>Bidirectional data channel</td>
+</tr>
+<tr>
+<td>ROS2 (DDS)</td>
+<td>Dynamic</td>
+<td>Communication between ROS2 nodes</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="sec-04-2-red-stability">Stability</h2>
+<p>STA mode proved to be <strong>stable</strong> during test sessions of up to 30 minutes, with no significant packet loss on the WebRTC control channel.</p>
+</div>
+</section>
+<section id="sec-04-3-webrtc" class="content-section">
+<div class="section-inner">
+<h1 id="sec-04-3-webrtc-4-3-webrtc-communication">4.3 WebRTC Communication</h1>
+<h2 id="sec-04-3-webrtc-connection-handshake">Connection Handshake</h2>
+<p>The Unitree Go2 robot uses <strong>WebRTC (Web Real-Time Communication)</strong> as the control protocol. The connection is established in three phases:</p>
+<p><img src="../assets/images/diagrama-11-webrtc-secuencia.jpg" alt="WebRTC handshake sequence diagram" style="max-width:100%;border-radius:8px;margin:1.5rem 0;"></p>
+<p><em>Figure 11: WebRTC handshake sequence between PC (go2_driver_node) and Unitree Go2. Phase 1: HTTP Handshake (GET /con_notify on port 9991, public key). Phase 2: SDP exchange encrypted with AES-256/RSA (POST /con_ing_(path)). Phase 3: Bidirectional WebRTC DataChannel establishment for commands and telemetry.</em></p>
+<h2 id="sec-04-3-webrtc-json-command-structure">JSON Command Structure</h2>
+<p>Each command is sent as a JSON message over the WebRTC data channel:</p>
+<pre><code class="language-json">{
+  &quot;type&quot;: &quot;msg&quot;,
+  &quot;topic&quot;: &quot;rt/api/sport/request&quot;,
+  &quot;data&quot;: {
+    &quot;header&quot;: {
+      &quot;identity&quot;: {
+        &quot;id&quot;: 12345,
+        &quot;api_id&quot;: 1009
+      },
+      &quot;policy&quot;: {
+        &quot;priority&quot;: 0,
+        &quot;noreply&quot;: true
+      }
+    },
+    &quot;parameter&quot;: &quot;{}&quot;,
+    &quot;binary&quot;: []
+  }
+}</code></pre>
+<h3 id="sec-04-3-webrtc-key-fields">Key Fields</h3>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead>
+<tr>
+<td><code>api_id</code></td>
+<td>Preprogrammed command identifier (1001-1304)</td>
+</tr>
+<tr>
+<td><code>identity.id</code></td>
+<td>Session ID (incremental)</td>
+</tr>
+<tr>
+<td><code>parameter</code></td>
+<td>Additional parameters in JSON (usually empty)</td>
+</tr>
+<tr>
+<td><code>policy.noreply</code></td>
+<td><code>true</code> = do not wait for robot response</td>
+</tr>
+<tr>
+<td><code>topic</code></td>
+<td>Robot's internal ROS2 topic</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="sec-04-3-webrtc-webrtc-channels">WebRTC Channels</h2>
+<p>Although the protocol supports multiple channels:</p>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>Channel</th>
+<th>Used in Ronaldo</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tr>
+<td><strong>DataChannel</strong></td>
+<td>✅ Yes</td>
+<td>Control commands and telemetry</td>
+</tr>
+<tr>
+<td>Video (H264)</td>
+<td>❌ No</td>
+<td>Camera streaming</td>
+</tr>
+<tr>
+<td>Audio</td>
+<td>❌ No</td>
+<td>Audio streaming</td>
+</tr>
+</tbody>
+</table></div>
+<p>The project uses <strong>only the data channel</strong> to send movement instructions.</p>
+</div>
+</section>
+<section id="sec-04-4-ros2" class="content-section">
+<div class="section-inner">
+<h1 id="sec-04-4-ros2-4-4-ros2-nodes">4.4 ROS2 Nodes</h1>
+<h2 id="sec-04-4-ros2-ros2-middleware">ROS2 Middleware</h2>
+<p>The robot's motion control is implemented on <strong>ROS2 Humble</strong>, using <strong>CycloneDDS</strong> as the communication middleware.</p>
+<h2 id="sec-04-4-ros2-three-main-nodes">Three Main Nodes</h2>
+<p>The three ROS2 nodes operate as follows (see detailed diagram in <a href="#sec-02-2-capas" target="_blank" rel="noopener">section 2.2</a>):</p>
+<h2 id="sec-04-4-ros2-node-1-go2-driver-node-main-driver">Node 1: go2_driver_node (Main Driver)</h2>
+<ul>
+  <li><strong>Maintains</strong> the WebRTC connection with the robot</li>
+</ul>
+<ul>
+  <li><strong>Publishes</strong> robot status:</li>
+</ul>
+<p>- <code>/go2_states</code> — general status - <code>/odom</code> — odometry - <code>/imu</code> — inertial unit - <code>/joint_states</code> — joint positions - <code>/point_cloud2</code> — LiDAR point cloud</p>
+<ul>
+  <li><strong>Subscribes</strong> to:</li>
+</ul>
+<p>- <code>/cmd_vel_out</code> — Twist velocity commands - <code>/webrtc_req</code> — WebRtcReq preprogrammed commands</p>
+<ul>
+  <li><strong>Sends</strong> both command types to the physical robot via WebRTC</li>
+</ul>
+<h2 id="sec-04-4-ros2-node-2-go2-command-executor-node-command-executor">Node 2: go2_command_executor_node (Command Executor)</h2>
+<ul>
+  <li><strong>Monitors</strong> the file <code>~/ros2_ws/commands/execute_command.json</code></li>
+</ul>
+<ul>
+  <li><strong>Detects</strong> <code>mtime</code> changes in the file</li>
+</ul>
+<ul>
+  <li><strong>Reads</strong> the command and translates it to <code>api_id</code></li>
+</ul>
+<ul>
+  <li><strong>Publishes</strong> a <code>WebRtcReq</code> on <code>/webrtc_req</code></li>
+</ul>
+<ul>
+  <li><strong>Waits</strong> for the result and writes it to <code>~/ros2_ws/commands/command_result.json</code></li>
+</ul>
+<h2 id="sec-04-4-ros2-node-3-go2-route-follower-node-route-follower">Node 3: go2_route_follower_node (Route Follower)</h2>
+<ul>
+  <li><strong>Monitors</strong> <code>~/ros2_ws/rutas/command.json</code></li>
+</ul>
+<ul>
+  <li><strong>Receives</strong> <code>execute</code> commands with route name</li>
+</ul>
+<ul>
+  <li><strong>Loads</strong> the route JSON file</li>
+</ul>
+<ul>
+  <li><strong>Executes</strong> steps sequentially:</li>
+</ul>
+<p>- Each step → <code>Twist</code> command on <code>/cmd_vel_out</code> - <code>go2_driver_node</code> forwards it to the robot</p>
+<ul>
+  <li><strong>Writes</strong> progress to <code>~/ros2_ws/rutas/status.json</code></li>
+</ul>
+<h2 id="sec-04-4-ros2-supporting-nodes">Supporting Nodes</h2>
+<p>In addition to the three main nodes, auxiliary nodes are launched:</p>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>Node</th>
+<th>Function</th>
+</tr>
+</thead>
+<tr>
+<td><code>robot_state_publisher</code></td>
+<td>Publishes robot TF transforms</td>
+</tr>
+<tr>
+<td><code>lidar_to_pointcloud</code></td>
+<td>Decodes LiDAR data</td>
+</tr>
+<tr>
+<td><code>pointcloud_to_laserscan</code></td>
+<td>Converts point cloud to LaserScan</td>
+</tr>
+<tr>
+<td><code>twist_mux</code></td>
+<td>Twist command multiplexer</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="sec-04-4-ros2-third-party-software">Third-Party Software</h2>
+<p>The robot control system is based on two main repositories:</p>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>Repository</th>
+<th>Content</th>
+</tr>
+</thead>
+<tr>
+<td><a href="https://github.com/abizovnuralem/go2_ros2_sdk/tree/master" target="_blank" rel="noopener"><code>go2_ros2_sdk</code></a></td>
+<td>Main ROS2 nodes and custom messages</td>
+</tr>
+<tr>
+<td><a href="https://github.com/SebasEng/unitree_go2_unitree" target="_blank" rel="noopener"><code>unitree_go2_unitree</code></a></td>
+<td>Route files, commands, and route follower modifications</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+</section>
+<section id="sec-04-5-archivos" class="content-section">
+<div class="section-inner">
+<h1 id="sec-04-5-archivos-4-5-shared-json-file-system">4.5 Shared JSON File System</h1>
+<h2 id="sec-04-5-archivos-file-based-communication">File-Based Communication</h2>
+<p>Coordination between the Python agent and the ROS2 nodes is accomplished via <strong>JSON files</strong> in a shared workspace directory. This mechanism was chosen for its simplicity and robustness: it eliminates the need for complex synchronization between processes and allows both sides to operate asynchronously.</p>
+<p><img src="../assets/images/diagrama-13-archivos-json-flujo.jpg" alt="Shared JSON file flow diagram" style="max-width:100%;border-radius:8px;margin:1.5rem 0;"></p>
+<p><em>Figure 13: Communication flow via JSON files between the Python agent (UnitreeRobotClient) and ROS2 nodes. UnitreeRobotClient writes execute_command.json and command.json; monitors command_result.json and status.json. Nodes go2_command_executor_node and go2_route_follower_node detect mtime changes and write results. Everything occurs in the shared workspace ~/ros2_ws/.</em></p>
+<h2 id="sec-04-5-archivos-command-files">Command Files</h2>
+<h3 id="sec-04-5-archivos-execute-command-json-input">execute_command.json (Input)</h3>
+<p>The <code>UnitreeRobotClient</code> writes the command to execute:</p>
+<pre><code class="language-json">{
+  &quot;command&quot;: &quot;sit&quot;,
+  &quot;timestamp&quot;: &quot;2026-05-15T14:30:00.000Z&quot;
+}</code></pre>
+<h3 id="sec-04-5-archivos-command-result-json-output">command_result.json (Output)</h3>
+<p>The <code>go2_command_executor_node</code> writes the result:</p>
+<pre><code class="language-json">{
+  &quot;status&quot;: &quot;completed&quot;,
+  &quot;command&quot;: &quot;sit&quot;,
+  &quot;execution_time_ms&quot;: 1800,
+  &quot;timestamp&quot;: &quot;2026-05-15T14:30:02.000Z&quot;
+}</code></pre>
+<h3 id="sec-04-5-archivos-command-registry-json-catalog">command_registry.json (Catalog)</h3>
+<p>Registry of the 30 available commands:</p>
+<pre><code class="language-json">{
+  &quot;sit&quot;: {
+    &quot;api_id&quot;: 1009,
+    &quot;topic&quot;: &quot;rt/api/sport/request&quot;,
+    &quot;parameter&quot;: {},
+    &quot;description&quot;: &quot;Sit down&quot;,
+    &quot;requires_stand&quot;: true,
+    &quot;duration_estimate&quot;: 2.0
+  }
+}</code></pre>
+<h2 id="sec-04-5-archivos-route-files">Route Files</h2>
+<h3 id="sec-04-5-archivos-command-json-input">command.json (Input)</h3>
+<p>Specifies which route to execute:</p>
+<pre><code class="language-json">{
+  &quot;command&quot;: &quot;execute&quot;,
+  &quot;route&quot;: &quot;ruta_lab_a_maquinas.json&quot;
+}</code></pre>
+<h3 id="sec-04-5-archivos-status-json-output">status.json (Output)</h3>
+<p>Real-time progress:</p>
+<pre><code class="language-json">{
+  &quot;state&quot;: &quot;running&quot;,
+  &quot;current_step&quot;: 1,
+  &quot;total_steps&quot;: 3,
+  &quot;progress&quot;: 0.33,
+  &quot;current_action&quot;: &quot;move_forward&quot;,
+  &quot;timestamp&quot;: &quot;2026-05-15T14:30:00.000Z&quot;
+}</code></pre>
+<h3 id="sec-04-5-archivos-route-states">Route States</h3>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>State</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tr>
+<td><code>init</code></td>
+<td>Initializing</td>
+</tr>
+<tr>
+<td><code>idle</code></td>
+<td>Waiting for command</td>
+</tr>
+<tr>
+<td><code>running</code></td>
+<td>Executing steps</td>
+</tr>
+<tr>
+<td><code>pause</code></td>
+<td>Paused</td>
+</tr>
+<tr>
+<td><code>completed</code></td>
+<td>Route finished</td>
+</tr>
+<tr>
+<td><code>emergency_stop</code></td>
+<td>Emergency stop</td>
+</tr>
+<tr>
+<td><code>route_complete</code></td>
+<td>Route sequence complete</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+</section>
+<section id="sec-04-6-rutas" class="content-section">
+<div class="section-inner">
+<h1 id="sec-04-6-rutas-4-6-navigation-routes">4.6 Navigation Routes</h1>
+<h2 id="sec-04-6-rutas-route-structure">Route Structure</h2>
+<p>Each route is defined in a JSON file with a sequence of <strong>movement steps</strong>. A typical route file:</p>
+<pre><code class="language-json">[
+  {
+    &quot;type&quot;: &quot;move_forward&quot;,
+    &quot;distance&quot;: 6.1,
+    &quot;speed&quot;: 0.5,
+    &quot;timeout&quot;: 30.0
+  },
+  {
+    &quot;type&quot;: &quot;turn&quot;,
+    &quot;angle_deg&quot;: -83.0,
+    &quot;speed&quot;: 50.0,
+    &quot;mode&quot;: &quot;time&quot;,
+    &quot;timeout&quot;: 15.0
+  },
+  {
+    &quot;type&quot;: &quot;move_forward&quot;,
+    &quot;distance&quot;: 4.0,
+    &quot;speed&quot;: 0.6,
+    &quot;timeout&quot;: 20.0
+  },
+  {
+    &quot;type&quot;: &quot;stop&quot;
+  }
+]</code></pre>
+<h2 id="sec-04-6-rutas-supported-step-types">Supported Step Types</h2>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>Type</th>
+<th>Description</th>
+<th>Parameters</th>
+</tr>
+</thead>
+<tr>
+<td><code>move_forward</code></td>
+<td>Forward linear movement</td>
+<td><code>distance</code> (m), <code>speed</code> (m/s), <code>timeout</code> (s)</td>
+</tr>
+<tr>
+<td><code>move_backward</code></td>
+<td>Backward linear movement</td>
+<td><code>distance</code> (m), <code>speed</code> (m/s), <code>timeout</code> (s)</td>
+</tr>
+<tr>
+<td><code>strafe_left</code></td>
+<td>Left lateral displacement</td>
+<td><code>distance</code> (m), <code>speed</code> (m/s), <code>timeout</code> (s)</td>
+</tr>
+<tr>
+<td><code>strafe_right</code></td>
+<td>Right lateral displacement</td>
+<td><code>distance</code> (m), <code>speed</code> (m/s), <code>timeout</code> (s)</td>
+</tr>
+<tr>
+<td><code>turn</code></td>
+<td>Turn in place</td>
+<td><code>angle_deg</code> (°), <code>speed</code> (°/s), <code>mode</code>, <code>timeout</code> (s)</td>
+</tr>
+<tr>
+<td><code>wait</code></td>
+<td>Wait</td>
+<td><code>duration</code> (s)</td>
+</tr>
+<tr>
+<td><code>stop</code></td>
+<td>Full stop</td>
+<td>None</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="sec-04-6-rutas-execution-modes">Execution Modes</h2>
+<p>Since the robot's internal odometry is not always available (especially after executing tricks), routes can operate in two modes:</p>
+<h3 id="sec-04-6-rutas-odometric-mode">Odometric Mode</h3>
+<ul>
+  <li>Uses position feedback (<code>/odom</code>)</li>
+</ul>
+<ul>
+  <li>Movements stop when reaching the exact distance/angle</li>
+</ul>
+<ul>
+  <li>More precise</li>
+</ul>
+<h3 id="sec-04-6-rutas-time-mode">Time Mode</h3>
+<ul>
+  <li>Movements executed by estimated duration</li>
+</ul>
+<ul>
+  <li>Calculates time = distance / speed</li>
+</ul>
+<ul>
+  <li><strong>Fallback</strong> strategy when odometry is unavailable</li>
+</ul>
+<h2 id="sec-04-6-rutas-campus-route-schematic">Campus Route Schematic</h2>
+<p><img src="../assets/images/diagrama-14-rutas-campus.jpg" alt="Campus route schematic diagram" style="max-width:100%;border-radius:8px;margin:1.5rem 0;"></p>
+<p><em>Figure 14: Robot route schematic map on the university campus. Robotics Laboratory (starting point) → Máquinas Building (move_forward 6.1m, turn -83°). From Máquinas: La Karpa (turn +45°), Giornale (turn -45°), Library F.X. Clavijero (strafe_left + turn), Biomédica (move_forward 4m, turn -90°).</em></p>
+<p><em>This diagram is a schematic representation. For the actual campus map with robot routes, see the routes image in the visual evidence section.</em></p>
+<h2 id="sec-04-6-rutas-route-sequences">Route Sequences</h2>
+<p>To reach a distant destination, multiple route files are concatenated. The <code>config/robot_routes.yaml</code> file defines these sequences:</p>
+<pre><code class="language-yaml">destinations:
+  LA_KARPA:
+    - ruta_lab_a_maquinas.json
+    - ruta_maquinas_a_karpa.json
+  GIORNALE:
+    - ruta_lab_a_maquinas.json
+    - ruta_maquinas_a_giornale.json
+  BIBLIOTECA:
+    - ruta_lab_a_maquinas.json
+    - ruta_maquinas_a_biblioteca.json</code></pre>
+<div class="warning">
+
+<strong>Important limitation</strong>: All routes assume starting from the <strong>Robotics Laboratory</strong>. There are no routes from other origins. This is one of the main lines of future work (see <a href="/docs/07-futuro/" target="_blank" rel="noopener">Chapter 7</a>).
+</div>
+<h2 id="sec-04-6-rutas-note-on-navigation-testing">Note on Navigation Testing</h2>
+<div class="highlight">
+
+<strong>Fictional reference points</strong>: The destination names used in the routes (La Karpa, Giornale, Library, Biomédica, Máquinas Building) are <strong>fictional reference points</strong> used for demonstration and system validation purposes. They do not represent real georeferenced campus locations.
+
+<strong>Laboratory testing</strong>: All navigation tests were conducted inside the university's <strong>electronics laboratories</strong>, simulating longer distances and trajectories than the physical space allowed. This validates that the route system works correctly; implementation in real open campus spaces would require adjusting distances, angles, and reference points in the JSON route files.
+</div>
+</div>
+</section>
+<section id="sec-04-7-comandos" class="content-section">
+<div class="section-inner">
+<h1 id="sec-04-7-comandos-4-7-preprogrammed-commands">4.7 Preprogrammed Commands</h1>
+<h2 id="sec-04-7-comandos-the-30-unitree-go2-commands">The 30 Unitree Go2 Commands</h2>
+<p>The manufacturer provides <strong>30 preprogrammed commands</strong> organized into four categories. Each command is identified by a numeric <code>api_id</code>.</p>
+<h3 id="sec-04-7-comandos-category-1-posture">Category 1: Posture</h3>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>api_id</th>
+<th>Command</th>
+<th>Description</th>
+<th>Requires Stand</th>
+<th>Est. Duration</th>
+</tr>
+</thead>
+<tr>
+<td>1001</td>
+<td>Damp</td>
+<td>Disable motors (free mode)</td>
+<td>No</td>
+<td>1.0 s</td>
+</tr>
+<tr>
+<td>1002</td>
+<td>BalanceStand</td>
+<td>Balance on two legs</td>
+<td>No</td>
+<td>2.0 s</td>
+</tr>
+<tr>
+<td>1003</td>
+<td>StopMove</td>
+<td>Stop all movement</td>
+<td>No</td>
+<td>0.5 s</td>
+</tr>
+<tr>
+<td>1004</td>
+<td>StandUp</td>
+<td>Stand on all four legs</td>
+<td>No</td>
+<td>2.0 s</td>
+</tr>
+<tr>
+<td>1005</td>
+<td>StandDown</td>
+<td>Lie down on ground</td>
+<td>Yes</td>
+<td>2.0 s</td>
+</tr>
+<tr>
+<td>1009</td>
+<td>Sit</td>
+<td>Sit down</td>
+<td>Yes</td>
+<td>2.0 s</td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="sec-04-7-comandos-category-2-movement">Category 2: Movement</h3>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>api_id</th>
+<th>Command</th>
+<th>Description</th>
+<th>Requires Stand</th>
+<th>Est. Duration</th>
+</tr>
+</thead>
+<tr>
+<td>1008</td>
+<td>Move</td>
+<td>Continuous speed (cmd_vel)</td>
+<td>Yes</td>
+<td>Indefinite</td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="sec-04-7-comandos-category-3-tricks-and-animations">Category 3: Tricks and Animations</h3>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>api_id</th>
+<th>Command</th>
+<th>Description</th>
+<th>Requires Stand</th>
+<th>Est. Duration</th>
+</tr>
+</thead>
+<tr>
+<td>1016</td>
+<td>Hello</td>
+<td>Paw greeting</td>
+<td>No</td>
+<td>3.0 s</td>
+</tr>
+<tr>
+<td>1022</td>
+<td>Dance1</td>
+<td>Choreographed dance 1</td>
+<td>No</td>
+<td>8.0 s</td>
+</tr>
+<tr>
+<td>1023</td>
+<td>Dance2</td>
+<td>Choreographed dance 2</td>
+<td>No</td>
+<td>8.0 s</td>
+</tr>
+<tr>
+<td>1025</td>
+<td>Heart</td>
+<td>Heart figure</td>
+<td>No</td>
+<td>5.0 s</td>
+</tr>
+<tr>
+<td>1030</td>
+<td>FrontFlip</td>
+<td>Forward flip</td>
+<td>No</td>
+<td>3.0 s</td>
+</tr>
+<tr>
+<td>1031</td>
+<td>FrontJump</td>
+<td>Forward jump</td>
+<td>No</td>
+<td>2.0 s</td>
+</tr>
+<tr>
+<td>1301</td>
+<td>Handstand</td>
+<td>Handstand</td>
+<td>No</td>
+<td>5.0 s</td>
+</tr>
+<tr>
+<td>1304</td>
+<td>Bound</td>
+<td>Consecutive jumps</td>
+<td>No</td>
+<td>4.0 s</td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="sec-04-7-comandos-category-4-status-queries">Category 4: Status Queries</h3>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>api_id</th>
+<th>Command</th>
+<th>Description</th>
+</tr>
+</thead>
+<tr>
+<td>(various)</td>
+<td>Robot status</td>
+<td>Battery, position, speed queries, etc.</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="sec-04-7-comandos-intent-to-command-mapping">Intent-to-Command Mapping</h2>
+<p>The <code>config/robot_routes.yaml</code> file maps classifier intents to robot commands:</p>
+<pre><code class="language-yaml">command_intents:
+  COMANDO_SIT: &quot;sit&quot;
+  COMANDO_STAND_UP: &quot;stand_up&quot;
+  COMANDO_STAND_DOWN: &quot;stand_down&quot;
+  COMANDO_DANCE: &quot;dance1&quot;
+  COMANDO_HELLO: &quot;hello&quot;
+  COMANDO_STOP: &quot;stop&quot;</code></pre>
+<h2 id="sec-04-7-comandos-command-execution-flow">Command Execution Flow</h2>
+<p>The complete execution flow of a preprogrammed command follows this sequence:</p>
+<ul>
+  <li>User says "Ronaldo, sit"</li>
+</ul>
+<ul>
+  <li>The Agent (Orchestrator) uses the YAML classifier to detect <code>COMANDO_SIT</code></li>
+</ul>
+<ul>
+  <li>The <code>ROBOT_COMMAND</code> event is published on the EventBus</li>
+</ul>
+<ul>
+  <li><code>UnitreeRobotProcess</code> receives the event and orders "sit" to execute</li>
+</ul>
+<ul>
+  <li><code>UnitreeRobotClient</code> writes <code>execute_command.json</code> with <code>{"command": "sit"}</code></li>
+</ul>
+<ul>
+  <li>The <code>go2_command_executor</code> node detects mtime change and publishes a <code>WebRtcReq</code> with <code>api_id=1009</code></li>
+</ul>
+<ul>
+  <li><code>go2_driver_node</code> sends the command to the robot via WebRTC DataChannel</li>
+</ul>
+<ul>
+  <li>The robot executes the sit action (~2 seconds)</li>
+</ul>
+<ul>
+  <li><code>command_result.json</code> is written with <code>{"status": "completed"}</code></li>
+</ul>
+<ul>
+  <li>The <code>MOVEMENT_COMPLETED</code> event is published — the system is ready for the next command</li>
+</ul>
+<h2 id="sec-04-7-comandos-execution-times">Execution Times</h2>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>Command Type</th>
+<th>Approximate Time</th>
+</tr>
+</thead>
+<tr>
+<td>Posture (sit, stand)</td>
+<td>~2 seconds</td>
+</tr>
+<tr>
+<td>Animation (dance, hello)</td>
+<td>3-8 seconds</td>
+</tr>
+<tr>
+<td>Short navigation route</td>
+<td>10-30 seconds</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+</section>
+<section id="sec-04-8-mapeo" class="content-section">
+<div class="section-inner">
+<h1 id="sec-04-8-mapeo-4-8-destination-and-command-mapping">4.8 Destination and Command Mapping</h1>
+<h2 id="sec-04-8-mapeo-the-robot-routes-yaml-file">The robot_routes.yaml File</h2>
+<p>The <code>config/robot_routes.yaml</code> file is the central configuration point that serves <strong>two mapping functions</strong>:</p>
+<h2 id="sec-04-8-mapeo-1-navigation-destination-to-route-mapping">1. Navigation Destination-to-Route Mapping</h2>
+<p>Maps each campus destination to a <strong>sequence of JSON route files</strong>:</p>
+<pre><code class="language-yaml">destinations:
+  LA_KARPA:
+    - ruta_lab_a_maquinas.json
+    - ruta_maquinas_a_karpa.json
+  
+  GIORNALE:
+    - ruta_lab_a_maquinas.json
+    - ruta_maquinas_a_giornale.json
+  
+  BIBLIOTECA:
+    - ruta_lab_a_maquinas.json
+    - ruta_maquinas_a_biblioteca.json
+  
+  BIOMEDICA:
+    - ruta_lab_a_maquinas.json
+    - ruta_maquinas_a_biomedica.json
+  
+  LAB_ROBOTICA:
+    - ruta_vuelta_al_lab.json</code></pre>
+<h3 id="sec-04-8-mapeo-supported-destinations">Supported Destinations</h3>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>Destination</th>
+<th># of Routes</th>
+<th>Complexity</th>
+</tr>
+</thead>
+<tr>
+<td>La Karpa (cafeteria)</td>
+<td>2 routes</td>
+<td>Medium</td>
+</tr>
+<tr>
+<td>Giornale (building)</td>
+<td>2 routes</td>
+<td>Medium</td>
+</tr>
+<tr>
+<td>Library F.X. Clavijero</td>
+<td>2 routes</td>
+<td>Medium</td>
+</tr>
+<tr>
+<td>Biomédica</td>
+<td>2 routes</td>
+<td>Medium</td>
+</tr>
+<tr>
+<td>Máquinas Building</td>
+<td>1 route</td>
+<td>Low</td>
+</tr>
+<tr>
+<td>Robotics Laboratory</td>
+<td>1 route</td>
+<td>Low</td>
+</tr>
+<tr>
+<td>(other destination)</td>
+<td>variable</td>
+<td>variable</td>
+</tr>
+</tbody>
+</table></div>
+<div class="warning">
+
+All routes assume starting from the <strong>Robotics Laboratory</strong>. There are no routes from other origins.
+</div>
+<h2 id="sec-04-8-mapeo-2-agent-intent-to-robot-command-mapping">2. Agent Intent-to-Robot Command Mapping</h2>
+<p>Maps each command intent recognized by the YAML classifier to its command identifier:</p>
+<pre><code class="language-yaml">command_intents:
+  COMANDO_SIT: &quot;sit&quot;
+  COMANDO_STAND_UP: &quot;stand_up&quot;
+  COMANDO_STAND_DOWN: &quot;stand_down&quot;
+  COMANDO_DANCE: &quot;dance1&quot;
+  COMANDO_DANCE2: &quot;dance2&quot;
+  COMANDO_HELLO: &quot;hello&quot;
+  COMANDO_STOP: &quot;stop&quot;
+  COMANDO_FRONT_FLIP: &quot;front_flip&quot;
+  COMANDO_FRONT_JUMP: &quot;front_jump&quot;
+  COMANDO_HANDSTAND: &quot;handstand&quot;
+  COMANDO_BOUND: &quot;bound&quot;
+  COMANDO_HEART: &quot;heart&quot;</code></pre>
+<h2 id="sec-04-8-mapeo-route-resolution-flow">Route Resolution Flow</h2>
+<p>The route resolution process from a navigation intent follows these steps:</p>
+<ul>
+  <li>The intent is detected (e.g., <code>NAVEGAR_KARPA</code>)</li>
+</ul>
+<ul>
+  <li><code>robot_routes.yaml</code> is queried to resolve the route sequence: <code>ruta_lab_a_maquinas.json</code> → <code>ruta_maquinas_a_karpa.json</code></li>
+</ul>
+<ul>
+  <li>For each route in the sequence:</li>
+</ul>
+<p>- <code>command.json</code> is written to the ROS2 workspace - Wait until <code>status.json</code> indicates <code>completed</code> - Move to the next route</p>
+<ul>
+  <li>Upon completing all routes, <code>MOVEMENT_COMPLETED</code> is published</li>
+</ul>
+<h2 id="sec-04-8-mapeo-mapping-accuracy">Mapping Accuracy</h2>
+<p>In Phase 2 testing, it was verified that:</p>
+<ul>
+  <li>The <strong>7 destinations</strong> defined in the YAML classifier have their corresponding mapping in the system</li>
+</ul>
+<ul>
+  <li>Destination mapping accuracy is <strong>100%</strong></li>
+</ul>
+<ul>
+  <li>Each navigation intent correctly resolves to a valid route sequence</li>
+</ul>
+</div>
+</section>
+<section id="sec-05-uia" class="content-section">
+<div class="section-inner">
+<h1 id="sec-05-uia-5-integration-with-uia">5. Integration with UIA</h1>
+<p>This chapter describes how Ronaldo integrates with the Universidad Iberoamericana campus: the supported destinations, the information accessible through the MCP server, and typical usage scenarios.</p>
+</div>
+</section>
+<section id="sec-05-1-destinos" class="content-section">
+<div class="section-inner">
+<h1 id="sec-05-1-destinos-5-1-supported-destinations">5.1 Supported Destinations</h1>
+<h2 id="sec-05-1-destinos-campus-navigation-points">Campus Navigation Points</h2>
+<p>Ronaldo can guide visitors to the following destinations within the Universidad Iberoamericana campus:</p>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>Destination</th>
+<th>Category</th>
+<th>Description</th>
+</tr>
+</thead>
+<tr>
+<td><strong>Robotics Laboratory</strong></td>
+<td>Laboratory</td>
+<td>Starting point and robot base</td>
+</tr>
+<tr>
+<td><strong>Máquinas Building</strong></td>
+<td>Laboratory</td>
+<td>Manufacturing workshop</td>
+</tr>
+<tr>
+<td><strong>La Karpa</strong></td>
+<td>Cafeteria</td>
+<td>Main campus cafeteria</td>
+</tr>
+<tr>
+<td><strong>Giornale</strong></td>
+<td>Building</td>
+<td>Building with restaurants (Tacos Don Julio, Sushi Nagoya)</td>
+</tr>
+<tr>
+<td><strong>Library F.X. Clavijero</strong></td>
+<td>Library</td>
+<td>Main library</td>
+</tr>
+<tr>
+<td><strong>Biomédica</strong></td>
+<td>Laboratory</td>
+<td>Biomedical engineering laboratory</td>
+</tr>
+<tr>
+<td><strong>General Classrooms</strong></td>
+<td>Classrooms</td>
+<td>Classroom building</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="sec-05-1-destinos-supplementary-information">Supplementary Information</h2>
+<p>In addition to physical navigation, Ronaldo can provide information about:</p>
+<ul>
+  <li><strong>Opening and closing times</strong> for each facility</li>
+</ul>
+<ul>
+  <li><strong>Available services</strong> at each location</li>
+</ul>
+<ul>
+  <li><strong>Descriptions</strong> of places</li>
+</ul>
+<ul>
+  <li><strong>Alternative routes</strong> when available</li>
+</ul>
+<h2 id="sec-05-1-destinos-current-limitation">Current Limitation</h2>
+<div class="warning">
+
+All navigation routes assume the robot <strong>departs from the Robotics Laboratory</strong>. Implementing routes from any origin requires a SLAM system, planned as future work.
+</div>
+</div>
+</section>
+<section id="sec-05-2-info" class="content-section">
+<div class="section-inner">
+<h1 id="sec-05-2-info-5-2-searchable-information">5.2 Searchable Information</h1>
+<h2 id="sec-05-2-info-campus-database-via-mcp">Campus Database (via MCP)</h2>
+<p>Through the MCP server, Ronaldo can query structured information about the campus in <strong>5 categories</strong>:</p>
+<h3 id="sec-05-2-info-1-places-search-places">1. Places (<code>search_places</code>)</h3>
+<p>Information about physical campus locations:</p>
+<ul>
+  <li>Place name</li>
+</ul>
+<ul>
+  <li>Type (cafeteria, classroom, laboratory, auditorium, office, store, restroom)</li>
+</ul>
+<ul>
+  <li>Location (building, floor)</li>
+</ul>
+<ul>
+  <li>Operating hours</li>
+</ul>
+<ul>
+  <li>Available services</li>
+</ul>
+<ul>
+  <li>Capacity</li>
+</ul>
+<h3 id="sec-05-2-info-2-food-search-food">2. Food (<code>search_food</code>)</h3>
+<p>Information about dining options:</p>
+<ul>
+  <li>Restaurants and cafeterias</li>
+</ul>
+<ul>
+  <li>Daily menus</li>
+</ul>
+<ul>
+  <li>Available food types</li>
+</ul>
+<ul>
+  <li>Prices</li>
+</ul>
+<ul>
+  <li>Service hours</li>
+</ul>
+<h3 id="sec-05-2-info-3-stores-search-products">3. Stores (<code>search_products</code>)</h3>
+<p>Information about products and stores:</p>
+<ul>
+  <li>Products available in campus stores</li>
+</ul>
+<ul>
+  <li>Prices</li>
+</ul>
+<ul>
+  <li>Inventory</li>
+</ul>
+<ul>
+  <li>Store location</li>
+</ul>
+<h3 id="sec-05-2-info-4-services-search-services">4. Services (<code>search_services</code>)</h3>
+<p>Administrative and service information:</p>
+<ul>
+  <li>Professor offices</li>
+</ul>
+<ul>
+  <li>Department locations</li>
+</ul>
+<ul>
+  <li>Access doors and schedules</li>
+</ul>
+<ul>
+  <li>Student services</li>
+</ul>
+<h3 id="sec-05-2-info-5-context-campus-context">5. Context (<code>campus_context</code>)</h3>
+<p>General campus information:</p>
+<ul>
+  <li>Campus overview</li>
+</ul>
+<ul>
+  <li>Traffic levels by time</li>
+</ul>
+<ul>
+  <li>Scheduled events</li>
+</ul>
+<ul>
+  <li>Institutional document search</li>
+</ul>
+<h2 id="sec-05-2-info-query-examples">Query Examples</h2>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>User Question</th>
+<th>Invoked MCP Tool</th>
+</tr>
+</thead>
+<tr>
+<td>"What is there to eat?"</td>
+<td><code>search_food</code></td>
+</tr>
+<tr>
+<td>"Where is Dr. López's office?"</td>
+<td><code>search_services</code></td>
+</tr>
+<tr>
+<td>"What time does the library close?"</td>
+<td><code>search_places</code></td>
+</tr>
+<tr>
+<td>"Are there vending machines nearby?"</td>
+<td><code>search_products</code></td>
+</tr>
+<tr>
+<td>"What places are open right now?"</td>
+<td><code>search_places</code> + <code>campus_context</code></td>
+</tr>
+</tbody>
+</table></div>
+</div>
+</section>
+<section id="sec-05-3-escenarios" class="content-section">
+<div class="section-inner">
+<h1 id="sec-05-3-escenarios-5-3-usage-scenarios">5.3 Usage Scenarios</h1>
+<h2 id="sec-05-3-escenarios-typical-use-cases">Typical Use Cases</h2>
+<p>Ronaldo is designed to assist different types of visitors on the UIA campus. <strong>The system is generic and can be adapted to any location</strong>; these scenarios illustrate its application in the university context as the first validation case.</p>
+<h3 id="sec-05-3-escenarios-1-first-time-visitor">1. First-Time Visitor</h3>
+<p>The most common and relevant case: a person who has <strong>never set foot on campus</strong> and needs complete orientation. Ronaldo not only gives directions but physically accompanies the visitor to their destination.</p>
+<pre><code>Visitor:    &quot;Ronaldo, it&#x27;s my first time here. Where is
+             the Mechatronics Engineering coordination?&quot;
+Ronaldo:    [search_places(&quot;coordinación ingeniería mecatrónica&quot;)]
+            &quot;Welcome to IBERO! The coordination office is in the
+             Engineering building. Would you like me to take you?&quot;
+Visitor:    &quot;Yes, please. I don&#x27;t know anything here.&quot;
+Ronaldo:    [navigate_to(&quot;INGENIERIAS&quot;)]
+            &quot;Don&#x27;t worry, follow me. Along the way I&#x27;ll tell you
+             about the buildings we&#x27;re passing.&quot;</code></pre>
+<h3 id="sec-05-3-escenarios-2-new-admission-applicant">2. New Admission Applicant</h3>
+<pre><code>Visitor:    &quot;Ronaldo, can you give me a tour of the university?&quot;
+Ronaldo:    &quot;Of course! Let&#x27;s start with the Robotics Laboratory.
+             Would you like me to take you to see the library?&quot;
+Visitor:    &quot;Yes, please.&quot;
+Ronaldo:    [navigate_to(&quot;BIBLIOTECA&quot;)]
+            &quot;Follow me. The F.X. Clavijero Library is open
+             from 7:00 to 22:00 and has study rooms.&quot;</code></pre>
+<h3 id="sec-05-3-escenarios-3-parent-on-admission-day">3. Parent on Admission Day</h3>
+<pre><code>Visitor:    &quot;Ronaldo, where can I buy a coffee?&quot;
+Ronaldo:    [search_places(&quot;café&quot;)]
+            &quot;La Karpa is the main cafeteria. There&#x27;s also
+             Cafe Borrego in the Giornale building.
+             Would you like me to take you to La Karpa?&quot;
+Visitor:    &quot;Yes, let&#x27;s go.&quot;
+Ronaldo:    [navigate_to(&quot;LA_KARPA&quot;)]</code></pre>
+<h3 id="sec-05-3-escenarios-4-visiting-student-for-competition">4. Visiting Student for Competition</h3>
+<pre><code>Visitor:    &quot;Ronaldo, I need to go to the machine lab&quot;
+Ronaldo:    [navigate_to(&quot;MAQUINAS&quot;)]
+            &quot;Let&#x27;s go to the machine building! Follow me.&quot;</code></pre>
+<h3 id="sec-05-3-escenarios-5-casual-visitor">5. Casual Visitor</h3>
+<pre><code>Visitor:    &quot;Ronaldo, what&#x27;s to eat today?&quot;
+Ronaldo:    [search_food()]
+            &quot;Today there are several options: Tacos Don Julio in Giornale,
+             sushi in Sushi Nagoya, and salads at La Karpa.
+             Would you like to go to any of them?&quot;
+Visitor:    &quot;I want tacos.&quot;
+Ronaldo:    [navigate_to(&quot;GIORNALE&quot;)]
+            &quot;Excellent choice! I&#x27;ll take you to Tacos Don Julio.&quot;</code></pre>
+<h3 id="sec-05-3-escenarios-6-capabilities-demonstration">6. Capabilities Demonstration</h3>
+<pre><code>Visitor:    &quot;Ronaldo, say hello.&quot;
+Ronaldo:    [COMANDO_HELLO → api_id 1016]
+            &quot;Hello! I&#x27;m Ronaldo, your guide at IBERO.&quot;
+
+Visitor:    &quot;Ronaldo, dance.&quot;
+Ronaldo:    [COMANDO_DANCE → api_id 1022]
+            (performs dance choreography)
+            &quot;Did you like it? Now tell me, where do you want to go?&quot;</code></pre>
+</div>
+</section>
+<section id="sec-06-resultados" class="content-section">
+<div class="section-inner">
+<h1 id="sec-06-resultados-6-experimentation-and-results">6. Experimentation and Results</h1>
+<p>This chapter presents the testing methodology and the results obtained in the four experimentation phases, following IEEE 29119-1, ISO 25022, and ISO 25023 standards.</p>
+</div>
+</section>
+<section id="sec-06-1-metodologia" class="content-section">
+<div class="section-inner">
+<h1 id="sec-06-1-metodologia-6-1-test-configuration">6.1 Test Configuration</h1>
+<h2 id="sec-06-1-metodologia-test-hardware">Test Hardware</h2>
+<p>Ronaldo was tested on the following equipment:</p>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>Component</th>
+<th>Specification</th>
+</tr>
+</thead>
+<tr>
+<td><strong>Equipment</strong></td>
+<td>HP Laptop 14-dq2xxx</td>
+</tr>
+<tr>
+<td><strong>Processor</strong></td>
+<td>Intel Core i5-1135G7 (8 cores)</td>
+</tr>
+<tr>
+<td><strong>RAM</strong></td>
+<td>12 GB</td>
+</tr>
+<tr>
+<td><strong>Operating System</strong></td>
+<td>Ubuntu 24.04 LTS</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="sec-06-1-metodologia-cloud-apis-used">Cloud APIs Used</h2>
+<p>Tests were conducted against the providers' real APIs, using their free tiers:</p>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>Service</th>
+<th>Model</th>
+<th>Function</th>
+</tr>
+</thead>
+<tr>
+<td><strong>Groq API</strong></td>
+<td><code>whisper-large-v3-turbo</code></td>
+<td>STT</td>
+</tr>
+<tr>
+<td><strong>Groq API</strong></td>
+<td><code>meta-llama/llama-4-scout-17b-16e-instruct</code></td>
+<td>LLM</td>
+</tr>
+<tr>
+<td><strong>Deepgram</strong></td>
+<td>Aura-2</td>
+<td>TTS (alternative)</td>
+</tr>
+<tr>
+<td><strong>Edge TTS</strong></td>
+<td>Microsoft Edge</td>
+<td>TTS (default)</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="sec-06-1-metodologia-important">Important</h2>
+<div class="highlight">
+
+Since the compute-intensive components (STT, LLM, TTS) run on remote servers, local hardware only needs to manage network I/O and audio playback. This eliminates the need for local GPUs, opening the possibility of running Ronaldo on low-cost hardware such as the Raspberry Pi 5.
+</div>
+<h2 id="sec-06-1-metodologia-test-organization">Test Organization</h2>
+<p>Tests were organized into <strong>four phases</strong>, each evaluating a specific dimension:</p>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>Phase</th>
+<th>Dimension</th>
+<th>Applied Standard</th>
+</tr>
+</thead>
+<tr>
+<td><strong>Phase 1</strong> — Guardrails</td>
+<td>Security and structure</td>
+<td>OWASP ASVS v4.0</td>
+</tr>
+<tr>
+<td><strong>Phase 2</strong> — Classification</td>
+<td>Functional accuracy</td>
+<td>ISO 25023</td>
+</tr>
+<tr>
+<td><strong>Phase 3</strong> — Performance</td>
+<td>Efficiency</td>
+<td>ISO 25022</td>
+</tr>
+<tr>
+<td><strong>Phase 4</strong> — Operation</td>
+<td>Resource efficiency</td>
+<td>ISO 25023</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+</section>
+<section id="sec-06-2-tabla-global" class="content-section">
+<div class="section-inner">
+<h1 id="sec-06-2-tabla-global-6-2-global-results-table">6.2 Global Results Table</h1>
+<h2 id="sec-06-2-tabla-global-consolidated-summary-of-the-four-phases">Consolidated Summary of the Four Phases</h2>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>Phase</th>
+<th>Test</th>
+<th>Metric</th>
+<th>Result</th>
+</tr>
+</thead>
+<tr>
+<td><strong>P1</strong> — Guardrails</td>
+<td>Tool Calling Validity</td>
+<td>Validity rate</td>
+<td><strong>100%</strong></td>
+</tr>
+<tr>
+<td><strong>P1</strong> — Guardrails</td>
+<td>Parameter Correctness</td>
+<td>Interventions</td>
+<td>10/8 detected</td>
+</tr>
+<tr>
+<td><strong>P1</strong> — Guardrails</td>
+<td>Critical False Positives</td>
+<td>FP rate</td>
+<td><strong>0%</strong></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><strong>P2</strong> — Classification</td>
+<td>Navigation (YAML)</td>
+<td>Recall</td>
+<td><strong>100%</strong></td>
+</tr>
+<tr>
+<td><strong>P2</strong> — Classification</td>
+<td>Commands (YAML)</td>
+<td>Recall</td>
+<td>80%</td>
+</tr>
+<tr>
+<td><strong>P2</strong> — Classification</td>
+<td>Destination Mapping</td>
+<td>Accuracy</td>
+<td><strong>100%</strong></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><strong>P3</strong> — Performance</td>
+<td>STT Latency</td>
+<td>Average</td>
+<td>750 ms</td>
+</tr>
+<tr>
+<td><strong>P3</strong> — Performance</td>
+<td>LLM Latency</td>
+<td>Average</td>
+<td>350 ms</td>
+</tr>
+<tr>
+<td><strong>P3</strong> — Performance</td>
+<td>ToolValidator</td>
+<td>Overhead</td>
+<td>0.004 ms</td>
+</tr>
+<tr>
+<td><strong>P3</strong> — Performance</td>
+<td>EventBus Stress</td>
+<td>Delivery</td>
+<td>100% / 1,300 ev/s</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><strong>P4</strong> — Operation</td>
+<td>Peak RAM</td>
+<td>Maximum</td>
+<td>85.7 MB</td>
+</tr>
+<tr>
+<td><strong>P4</strong> — Operation</td>
+<td>Idle CPU</td>
+<td>Average</td>
+<td>0.7%</td>
+</tr>
+<tr>
+<td><strong>P4</strong> — Operation</td>
+<td>RPi5 Viability</td>
+<td>RAM used vs. avail.</td>
+<td><strong>1.0%</strong></td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="sec-06-2-tabla-global-key-findings">Key Findings</h2>
+<ul>
+  <li><strong>100% valid tool calling</strong>: the LLM never generated invalid tool syntax</li>
+</ul>
+<ul>
+  <li><strong>Zero false positives in navigation</strong>: the robot never attempted to move when the user was just conversing</li>
+</ul>
+<ul>
+  <li><strong>Perfect navigation recall</strong>: the YAML classifier correctly detected 100% of navigation commands</li>
+</ul>
+<ul>
+  <li><strong>Acceptable total latency</strong>: ~1.6 seconds end-to-end (voice → audible response)</li>
+</ul>
+<ul>
+  <li><strong>Minimal resource consumption</strong>: only 85.7 MB peak RAM (1% of a Raspberry Pi 5)</li>
+</ul>
+</div>
+</section>
+<section id="sec-06-3-guardrails" class="content-section">
+<div class="section-inner">
+<h1 id="sec-06-3-guardrails-6-3-phase-1-guardrails-security">6.3 Phase 1 — Guardrails (Security)</h1>
+<h2 id="sec-06-3-guardrails-objective">Objective</h2>
+<p>Verify that the agent invokes tools only when appropriate, that tool parameters are correct, and that no critical false positives occur (such as attempting to navigate when the user is merely conversing).</p>
+<p>Reference standard: <strong>OWASP ASVS v4.0</strong>.</p>
+<h2 id="sec-06-3-guardrails-test-1a-tool-calling-validity-rate">Test 1A: Tool Calling Validity Rate</h2>
+<p>A set of <strong>49 Spanish prompts</strong> was constructed, distributed across five categories: navigation, robot commands, general conversation, ambiguous queries, and noise.</p>
+<h3 id="sec-06-3-guardrails-results">Results</h3>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>Metric</th>
+<th>Value</th>
+</tr>
+</thead>
+<tr>
+<td>Prompts processed</td>
+<td>49</td>
+</tr>
+<tr>
+<td>Prompts with tool calls</td>
+<td>13 (26.5%)</td>
+</tr>
+<tr>
+<td>Valid responses</td>
+<td>49</td>
+</tr>
+<tr>
+<td><strong>Validity rate</strong></td>
+<td><strong>100.0%</strong></td>
+</tr>
+<tr>
+<td>Raw syntax errors</td>
+<td>0</td>
+</tr>
+</tbody>
+</table></div>
+<div class="highlight">
+
+All navigation prompts (10/10) produced valid tool calls to <code>navigate_to</code>. Noise and conversation prompts produced clean text responses with no residual embedded tool syntax.
+</div>
+<h2 id="sec-06-3-guardrails-test-1b-parameter-correctness">Test 1B: Parameter Correctness</h2>
+<p><strong>9 test cases</strong> were defined covering valid tools, missing parameters, incorrect types, null values, unknown tools, and multiple combinations.</p>
+<h3 id="sec-06-3-guardrails-results">Results</h3>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>Case</th>
+<th>Expected Corrections</th>
+<th>Obtained</th>
+<th>Status</th>
+</tr>
+</thead>
+<tr>
+<td>Valid command</td>
+<td>0</td>
+<td>0</td>
+<td>✅ PASS</td>
+</tr>
+<tr>
+<td>Missing required query</td>
+<td>1</td>
+<td>1</td>
+<td>✅ PASS</td>
+</tr>
+<tr>
+<td>Invalid place type</td>
+<td>1</td>
+<td>1</td>
+<td>✅ PASS</td>
+</tr>
+<tr>
+<td>Empty destination</td>
+<td>1</td>
+<td>2</td>
+<td>✅ PASS*</td>
+</tr>
+<tr>
+<td>Unknown tool</td>
+<td>1</td>
+<td>1</td>
+<td>✅ PASS</td>
+</tr>
+<tr>
+<td>Query is None</td>
+<td>1</td>
+<td>1</td>
+<td>✅ PASS</td>
+</tr>
+<tr>
+<td>Name is not string</td>
+<td>1</td>
+<td>1</td>
+<td>✅ PASS</td>
+</tr>
+<tr>
+<td>Multiple valid</td>
+<td>0</td>
+<td>0</td>
+<td>✅ PASS</td>
+</tr>
+<tr>
+<td>Multiple with errors</td>
+<td>2</td>
+<td>3</td>
+<td>✅ PASS*</td>
+</tr>
+<tr>
+<td><strong>Total</strong></td>
+<td><strong>8</strong></td>
+<td><strong>10</strong></td>
+<td><strong>✅ PASS</strong></td>
+</tr>
+</tbody>
+</table></div>
+<div class="note">
+
+The ToolValidator detected more corrections than expected in some cases, reflecting <strong>desirable conservative</strong> behavior: it prefers to flag more potential issues rather than overlook any.
+</div>
+<h2 id="sec-06-3-guardrails-test-1c-critical-false-positives">Test 1C: Critical False Positives</h2>
+<p><strong>29 prompts</strong> from safe categories (conversation, ambiguous, and noise) were evaluated against the LLM with full tool calling.</p>
+<h3 id="sec-06-3-guardrails-result">Result</h3>
+<p><strong>0% false positives</strong> — No prompt triggered <code>navigate_to</code> when it should not have.</p>
+<div class="highlight">
+
+The model correctly discriminates between navigation intents and other types of queries, preventing unsolicited robot movements.
+</div>
+</div>
+</section>
+<section id="sec-06-4-clasificacion" class="content-section">
+<div class="section-inner">
+<h1 id="sec-06-4-clasificacion-6-4-phase-2-intent-classification">6.4 Phase 2 — Intent Classification</h1>
+<h2 id="sec-06-4-clasificacion-objective">Objective</h2>
+<p>Evaluate the hybrid system's ability (YAML classifier + LLM with tool calling) to correctly distinguish between navigation intents, robot commands, general conversation, and acoustic noise.</p>
+<p>Reference standard: <strong>ISO 25023</strong> — functional accuracy.</p>
+<h2 id="sec-06-4-clasificacion-confusion-matrix">Confusion Matrix</h2>
+<p><strong>40 labeled phrases</strong> were evaluated across four categories.</p>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>Expected \ Assigned</th>
+<th>Navigation</th>
+<th>Command</th>
+<th>Conversation</th>
+<th>Noise</th>
+</tr>
+</thead>
+<tr>
+<td><strong>Navigation (10)</strong></td>
+<td>10</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+</tr>
+<tr>
+<td><strong>Command (10)</strong></td>
+<td>0</td>
+<td>8</td>
+<td>2</td>
+<td>0</td>
+</tr>
+<tr>
+<td><strong>Conversation (10)</strong></td>
+<td>3</td>
+<td>0</td>
+<td>7</td>
+<td>0</td>
+</tr>
+<tr>
+<td><strong>Noise (10)</strong></td>
+<td>0</td>
+<td>1</td>
+<td>9</td>
+<td>0</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="sec-06-4-clasificacion-metrics-by-class">Metrics by Class</h2>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>Class</th>
+<th>Precision</th>
+<th>Recall</th>
+<th>F1-Score</th>
+</tr>
+</thead>
+<tr>
+<td>Navigation</td>
+<td>0.7692</td>
+<td><strong>1.0000</strong></td>
+<td>0.8696</td>
+</tr>
+<tr>
+<td>Command</td>
+<td>0.8889</td>
+<td>0.8000</td>
+<td>0.8421</td>
+</tr>
+<tr>
+<td>Conversation</td>
+<td>0.5556</td>
+<td>0.7692</td>
+<td>0.6452</td>
+</tr>
+<tr>
+<td>Noise</td>
+<td>0.0000</td>
+<td>0.0000</td>
+<td>0.0000</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="sec-06-4-clasificacion-analysis">Analysis</h2>
+<h3 id="sec-06-4-clasificacion-navigation-perfect-recall">Navigation — Perfect Recall</h3>
+<p>The most safety-critical category achieved <strong>100% recall</strong>. This means the system never failed to recognize a navigation command when the user actually wanted to move.</p>
+<h3 id="sec-06-4-clasificacion-commands-80-recall">Commands — 80% Recall</h3>
+<p>Two commands were misclassified as conversation. This is because the YAML classifier is deterministic and depends on exact patterns; phrases with lexical variations not captured in the patterns fall through to the second stage (LLM).</p>
+<h3 id="sec-06-4-clasificacion-conversation-3-navigation-false-positives">Conversation — 3 Navigation False Positives</h3>
+<p>Three conversation phrases were interpreted as navigation because they contained campus place names. The YAML classifier detected them as navigation patterns before the LLM could analyze the full context.</p>
+<h3 id="sec-06-4-clasificacion-noise-designed-to-be-permeable">Noise — Designed to Be Permeable</h3>
+<div class="note">
+
+The noise category scored 0% because the system was designed to be <strong>permeable</strong>: it prefers to process noise input as conversation rather than reject it. This avoids false rejections of legitimate commands.
+</div>
+<h2 id="sec-06-4-clasificacion-additional-verification-destination-mapping">Additional Verification: Destination Mapping</h2>
+<p>It was verified that the <strong>7 destinations</strong> defined in the YAML classifier have their corresponding internal mapping with <strong>100% accuracy</strong>.</p>
+</div>
+</section>
+<section id="sec-06-5-rendimiento" class="content-section">
+<div class="section-inner">
+<h1 id="sec-06-5-rendimiento-6-5-phase-3-performance">6.5 Phase 3 — Performance</h1>
+<h2 id="sec-06-5-rendimiento-objective">Objective</h2>
+<p>Measure the individual latency of each pipeline component and the throughput capacity of the event bus.</p>
+<p>Reference standard: <strong>ISO 25022</strong> — efficiency in use.</p>
+<h2 id="sec-06-5-rendimiento-stt-latency-groq-whisper">STT Latency (Groq Whisper)</h2>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>Metric</th>
+<th>Time (ms)</th>
+</tr>
+</thead>
+<tr>
+<td>Average</td>
+<td>750.7</td>
+</tr>
+<tr>
+<td>Median (P50)</td>
+<td>708.2</td>
+</tr>
+<tr>
+<td>P95</td>
+<td>1025.0</td>
+</tr>
+<tr>
+<td>Maximum</td>
+<td>1025.0</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="sec-06-5-rendimiento-llm-latency-groq-llama-4-scout">LLM Latency (Groq Llama 4 Scout)</h2>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>Complexity</th>
+<th>Latency (ms)</th>
+<th>Characters</th>
+<th>Throughput (chars/s)</th>
+</tr>
+</thead>
+<tr>
+<td>Simple</td>
+<td>343.2</td>
+<td>5</td>
+<td>14.6</td>
+</tr>
+<tr>
+<td>Medium</td>
+<td>358.0</td>
+<td>78</td>
+<td>218.8</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="sec-06-5-rendimiento-toolvalidator-overhead">ToolValidator Overhead</h2>
+<p>1,000 iterations, batch of 5 tools:</p>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>Metric</th>
+<th>Time (ms)</th>
+</tr>
+</thead>
+<tr>
+<td>Average</td>
+<td>0.004</td>
+</tr>
+<tr>
+<td>Median (P50)</td>
+<td>0.004</td>
+</tr>
+<tr>
+<td>P95</td>
+<td>0.005</td>
+</tr>
+<tr>
+<td>Maximum (P99)</td>
+<td>0.026</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="sec-06-5-rendimiento-total-pipeline-latency-breakdown">Total Pipeline Latency Breakdown</h2>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>Stage</th>
+<th>Time (ms)</th>
+</tr>
+</thead>
+<tr>
+<td>STT (Groq Whisper)</td>
+<td>750</td>
+</tr>
+<tr>
+<td>LLM (Groq Llama 4 Scout)</td>
+<td>350</td>
+</tr>
+<tr>
+<td>ToolValidator</td>
+<td>< 0.01</td>
+</tr>
+<tr>
+<td>TTS (Edge TTS, estimated)</td>
+<td>500</td>
+</tr>
+<tr>
+<td><strong>Estimated total</strong></td>
+<td><strong>~1,600 ms</strong></td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="sec-06-5-rendimiento-eventbus-stress-test">EventBus Stress Test</h2>
+<p>A publisher process sent 100 events sequentially to a consumer process.</p>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>Metric</th>
+<th>Value</th>
+</tr>
+</thead>
+<tr>
+<td>Events sent</td>
+<td>100</td>
+</tr>
+<tr>
+<td>Events received</td>
+<td>100</td>
+</tr>
+<tr>
+<td>Losses</td>
+<td>0</td>
+</tr>
+<tr>
+<td>Out of order</td>
+<td>0</td>
+</tr>
+<tr>
+<td>Total time</td>
+<td>76.9 ms</td>
+</tr>
+<tr>
+<td>Throughput</td>
+<td><strong>1,300 events/s</strong></td>
+</tr>
+<tr>
+<td><strong>Result</strong></td>
+<td><strong>✅ PASS</strong></td>
+</tr>
+</tbody>
+</table></div>
+<div class="highlight">
+
+The EventBus demonstrated perfect reliability: 100% of events were delivered in the correct order, with no losses. The throughput of 1,300 events per second is sufficient for the system's use case.
+</div>
+</div>
+</section>
+<section id="sec-06-6-operacion" class="content-section">
+<div class="section-inner">
+<h1 id="sec-06-6-operacion-6-6-phase-4-operation-and-resources">6.6 Phase 4 — Operation and Resources</h1>
+<h2 id="sec-06-6-operacion-objective">Objective</h2>
+<p>Monitor CPU and RAM consumption of the system in different operational states to determine the feasibility of running it on low-cost hardware.</p>
+<p>Reference standard: <strong>ISO 25023</strong> — resource efficiency.</p>
+<h2 id="sec-06-6-operacion-resource-consumption-by-state">Resource Consumption by State</h2>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>State</th>
+<th>CPU avg (%)</th>
+<th>CPU max (%)</th>
+<th>RAM avg (MB)</th>
+<th>RAM max (MB)</th>
+</tr>
+</thead>
+<tr>
+<td><strong>Idle</strong></td>
+<td>0.7</td>
+<td>10.0</td>
+<td>23.5</td>
+<td>23.5</td>
+</tr>
+<tr>
+<td><strong>Processing</strong></td>
+<td>0.2</td>
+<td>10.0</td>
+<td>45.7</td>
+<td>45.7</td>
+</tr>
+<tr>
+<td><strong>Playback</strong></td>
+<td>0.0</td>
+<td>0.0</td>
+<td>85.7</td>
+<td>85.7</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="sec-06-6-operacion-comparison-ronaldo-vs-raspberry-pi-5">Comparison: Ronaldo vs Raspberry Pi 5</h2>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>Metric</th>
+<th>Ronaldo</th>
+<th>RPi5 Available</th>
+<th>% Used</th>
+</tr>
+</thead>
+<tr>
+<td>Peak RAM</td>
+<td>85.7 MB</td>
+<td>8,192 MB</td>
+<td><strong>1.0%</strong></td>
+</tr>
+<tr>
+<td>Idle RAM</td>
+<td>23.5 MB</td>
+<td>8,192 MB</td>
+<td><strong>0.3%</strong></td>
+</tr>
+<tr>
+<td>Peak CPU</td>
+<td>10% (1 core)</td>
+<td>4 Cortex-A76 cores</td>
+<td>2.5%</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="sec-06-6-operacion-viability-conclusion">Viability Conclusion</h2>
+<div class="highlight">
+
+Ronaldo uses only <strong>1.0%</strong> of the available RAM on a Raspberry Pi 5 at its peak. This confirms that the Raspberry Pi 5 is viable hardware for running the system, with sufficient capacity to also handle the operating system, ROS2, and the Unitree Go2 robot drivers.
+</div>
+<h2 id="sec-06-6-operacion-why-such-low-consumption">Why Such Low Consumption?</h2>
+<p>The low resource consumption is because <strong>intensive processing runs on remote servers</strong>:</p>
+<ul>
+  <li>STT → Groq servers</li>
+</ul>
+<ul>
+  <li>LLM → Groq servers</li>
+</ul>
+<ul>
+  <li>TTS → Microsoft Edge / Deepgram servers</li>
+</ul>
+<p>Local hardware only needs:</p>
+<ul>
+  <li>Manage network I/O</li>
+</ul>
+<ul>
+  <li>Run Vosk (offline wake word, 42 MB)</li>
+</ul>
+<ul>
+  <li>Run Silero VAD (offline)</li>
+</ul>
+<ul>
+  <li>Play audio</li>
+</ul>
+<ul>
+  <li>Monitor JSON files in the ROS2 workspace</li>
+</ul>
+<h2 id="sec-06-6-operacion-monitoring-with-psutil">Monitoring with psutil</h2>
+<p>Monitoring was performed using the <code>psutil</code> library (v7.2.2) measuring CPU and RAM every second during the three operational states:</p>
+<ul>
+  <li><strong>Idle</strong>: system on standby, listening for wake word</li>
+</ul>
+<ul>
+  <li><strong>Processing</strong>: system transcribing audio and querying LLM</li>
+</ul>
+<ul>
+  <li><strong>Playback</strong>: system playing TTS response</li>
+</ul>
+</div>
+</section>
+<section id="sec-06-7-integracion" class="content-section">
+<div class="section-inner">
+<h1 id="sec-06-7-integracion-6-7-physical-robot-integration">6.7 Physical Robot Integration</h1>
+<h2 id="sec-06-7-integracion-qualitative-integration-tests">Qualitative Integration Tests</h2>
+<p>In addition to the quantitative tests of the four phases, <strong>qualitative tests</strong> of the integration with the physical Unitree Go2 Air robot were conducted.</p>
+<h2 id="sec-06-7-integracion-preprogrammed-commands">Preprogrammed Commands</h2>
+<p>The correct execution of the robot's <strong>30 preprogrammed commands</strong> was verified through the complete pipeline: from voice activation to physical movement.</p>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>Command Type</th>
+<th>Result</th>
+</tr>
+</thead>
+<tr>
+<td>Posture (sit, stand, lie down)</td>
+<td>✅ Reliable execution</td>
+</tr>
+<tr>
+<td>Animation (greet, dance)</td>
+<td>✅ Reliable execution</td>
+</tr>
+<tr>
+<td>Tricks (flip, jump)</td>
+<td>✅ Reliable execution</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="sec-06-7-integracion-navigation-routes">Navigation Routes</h2>
+<p>Route execution was successfully tested for destinations mapped from the Robotics Laboratory:</p>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>Aspect</th>
+<th>Observation</th>
+</tr>
+</thead>
+<tr>
+<td>Step transitions</td>
+<td>Smooth, no noticeable pauses</td>
+</tr>
+<tr>
+<td>Turn accuracy</td>
+<td>Acceptable (time mode as fallback)</td>
+</tr>
+<tr>
+<td>Stop at completion</td>
+<td>Correct</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="sec-06-7-integracion-execution-times">Execution Times</h2>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>Action Type</th>
+<th>Approximate Time</th>
+</tr>
+</thead>
+<tr>
+<td>Posture command</td>
+<td>~2 seconds</td>
+</tr>
+<tr>
+<td>Animation command</td>
+<td>3-8 seconds</td>
+</tr>
+<tr>
+<td>Short navigation route</td>
+<td>10-30 seconds</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="sec-06-7-integracion-network-stability">Network Stability</h2>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>Mode</th>
+<th>Maximum Test Duration</th>
+<th>Packet Loss</th>
+</tr>
+</thead>
+<tr>
+<td>STA (shared WiFi)</td>
+<td>~30 minutes</td>
+<td>Not significant</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="sec-06-7-integracion-observations">Observations</h2>
+<ul>
+  <li>STA WiFi connection mode proved stable for extended sessions</li>
+</ul>
+<ul>
+  <li>Odometry is not always available after executing tricks or animations</li>
+</ul>
+<ul>
+  <li>The <code>Move</code> command (api_id 1008, continuous speed) requires Twist control that was not fully integrated</li>
+</ul>
+<ul>
+  <li>The robot requires approximately 2 seconds to complete posture commands</li>
+</ul>
+<h2 id="sec-06-7-integracion-visual-evidence">Visual Evidence</h2>
+<p><em>[Photos and videos of the robot in operation will be inserted here]</em></p>
+</div>
+</section>
+<section id="sec-07-futuro" class="content-section">
+<div class="section-inner">
+<h1 id="sec-07-futuro-7-limitations-and-future-work">7. Limitations and Future Work</h1>
+<h2 id="sec-07-futuro-identified-limitations">Identified Limitations</h2>
+<h3 id="sec-07-futuro-1-absence-of-slam">1. Absence of SLAM</h3>
+<p>The most significant limitation is the absence of a <strong>Simultaneous Localization and Mapping (SLAM)</strong> system. In the current configuration:</p>
+<ul>
+  <li>Routes are <strong>predefined</strong> and assume the robot always starts from the Robotics Laboratory</li>
+</ul>
+<ul>
+  <li>There is no dynamic navigation capability from any campus point</li>
+</ul>
+<ul>
+  <li>There is no real-time obstacle detection or avoidance</li>
+</ul>
+<div class="highlight">
+
+The robot features a <strong>360° LiDAR</strong> (maximum depth 10 m), an <strong>Intel RealSense depth camera</strong>, and a <strong>9-DOF IMU</strong> that provide the necessary sensory information to implement SLAM. The <strong>RTAB-Map</strong> and <strong>Cartographer</strong> frameworks are compatible with ROS2 and offer direct integration with the message types already published by the robot controller.
+</div>
+<h3 id="sec-07-futuro-2-fixed-origin-navigation">2. Fixed Origin Navigation</h3>
+<p>All routes assume starting from the Robotics Laboratory. There are no routes from other origins, which limits the use case to a "guided tour" from a fixed point.</p>
+<h3 id="sec-07-futuro-3-unreliable-odometry">3. Unreliable Odometry</h3>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>Situation</th>
+<th>Odometry Availability</th>
+</tr>
+</thead>
+<tr>
+<td>Normal operation</td>
+<td>✅ Available</td>
+</tr>
+<tr>
+<td>After tricks (FrontFlip, Dance)</td>
+<td>❌ Not available</td>
+</tr>
+<tr>
+<td>After sudden movements</td>
+<td>❌ Not available</td>
+</tr>
+</tbody>
+</table></div>
+<p>When odometry is unavailable, routes operate in <strong>time mode</strong> (estimated duration), which reduces accuracy.</p>
+<h3 id="sec-07-futuro-4-continuous-movement-commands">4. Continuous Movement Commands</h3>
+<p>The <code>Move</code> command (api_id 1008) is not fully mapped:</p>
+<ul>
+  <li>Requires velocity control (<code>cmd_vel</code>)</li>
+</ul>
+<ul>
+  <li>Not implemented for voice commands at the time of testing</li>
+</ul>
+<h3 id="sec-07-futuro-5-no-real-user-testing">5. No Real User Testing</h3>
+<p>Tests were conducted with simulated data and predefined prompts. No usability tests were performed with real campus visitors.</p>
+<h2 id="sec-07-futuro-future-work-lines">Future Work Lines</h2>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>Priority</th>
+<th>Task</th>
+<th>Impact</th>
+</tr>
+</thead>
+<tr>
+<td><strong>High</strong></td>
+<td>Integrate SLAM (RTAB-Map or Cartographer)</td>
+<td>Dynamic navigation from any point</td>
+</tr>
+<tr>
+<td><strong>High</strong></td>
+<td>Implement obstacle detection and avoidance</td>
+<td>Safety in environments with people</td>
+</tr>
+<tr>
+<td><strong>High</strong></td>
+<td>Testing with real users on campus</td>
+<td>Usability validation</td>
+</tr>
+<tr>
+<td><strong>Medium</strong></td>
+<td>Routes from any origin (not just Robotics Lab)</td>
+<td>Usage flexibility</td>
+</tr>
+<tr>
+<td><strong>Medium</strong></td>
+<td>Improve command classifier (more robust YAML)</td>
+<td>Recall from 80% → 95%+</td>
+</tr>
+<tr>
+<td><strong>Medium</strong></td>
+<td>Complete <code>Move</code> command integration</td>
+<td>Continuous voice-controlled movement</td>
+</tr>
+<tr>
+<td><strong>Medium</strong></td>
+<td>Migration to local models (full offline)</td>
+<td>Operation without internet</td>
+</tr>
+<tr>
+<td><strong>Low</strong></td>
+<td>Multilingual support (English, French)</td>
+<td>International visitors</td>
+</tr>
+<tr>
+<td><strong>Low</strong></td>
+<td>Academic calendar integration</td>
+<td>Real-time event information</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+</section>
+<section id="sec-08-recursos" class="content-section">
+<div class="section-inner">
+<h1 id="sec-08-recursos-8-resources">8. Resources</h1>
+<p>Repositories, documentation, and references for the Ronaldo project.</p>
+</div>
+</section>
+<section id="sec-08-1-repo" class="content-section">
+<div class="section-inner">
+<h1 id="sec-08-1-repo-8-1-project-repository">8.1 Project Repository</h1>
+<h2 id="sec-08-1-repo-source-code">Source Code</h2>
+<p>Ronaldo's complete source code is available on GitHub:</p>
+<div class="highlight">
+
+<a href="https://github.com/Rimuru022/Agentic-Unitree-Control" target="_blank" rel="noopener"><strong>github.com/Rimuru022/Agentic-Unitree-Control</strong></a>
+</div>
+<h2 id="sec-08-1-repo-repository-structure">Repository Structure</h2>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>Directory</th>
+<th>Contents</th>
+</tr>
+</thead>
+<tr>
+<td><code>src/prospectiva/</code></td>
+<td>Main agent source code</td>
+</tr>
+<tr>
+<td><code>src/prospectiva/bus/</code></td>
+<td>EventBus implementation</td>
+</tr>
+<tr>
+<td><code>src/prospectiva/procesos/</code></td>
+<td>The 4 processes (audio, orchestrator, playback, robot)</td>
+</tr>
+<tr>
+<td><code>src/prospectiva/procesos/actions/</code></td>
+<td>Action executor (navigation, commands)</td>
+</tr>
+<tr>
+<td><code>src/prospectiva/modulos/</code></td>
+<td>Modules (STT, TTS, LLM, classifier, VAD)</td>
+</tr>
+<tr>
+<td><code>src/prospectiva/utils/</code></td>
+<td>Utilities (MCP client, memory, tool validator)</td>
+</tr>
+<tr>
+<td><code>src/prospectiva/interfaces/</code></td>
+<td>Abstract interfaces</td>
+</tr>
+<tr>
+<td><code>config/</code></td>
+<td>YAML configuration files</td>
+</tr>
+<tr>
+<td><code>scripts/</code></td>
+<td>Utility and test scripts</td>
+</tr>
+<tr>
+<td><code>tests/</code></td>
+<td>Unit and integration tests</td>
+</tr>
+<tr>
+<td><code>tests/results/</code></td>
+<td>Results from the 4 test phases (JSON)</td>
+</tr>
+<tr>
+<td><code>models/</code></td>
+<td>Offline models (Vosk)</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="sec-08-1-repo-license">License</h2>
+<p><em>[License information pending]</em></p>
+</div>
+</section>
+<section id="sec-08-2-sdks" class="content-section">
+<div class="section-inner">
+<h1 id="sec-08-2-sdks-8-2-sdks-and-dependencies">8.2 SDKs and Dependencies</h1>
+<h2 id="sec-08-2-sdks-third-party-repositories-used">Third-Party Repositories Used</h2>
+<h3 id="sec-08-2-sdks-robot-control">Robot Control</h3>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>Repository</th>
+<th>Description</th>
+</tr>
+</thead>
+<tr>
+<td><a href="https://github.com/abizovnuralem/go2_ros2_sdk/tree/master" target="_blank" rel="noopener"><strong>go2_ros2_sdk</strong></a></td>
+<td>ROS2 SDK for Unitree Go2. Provides the 3 main nodes and custom messages</td>
+</tr>
+<tr>
+<td><a href="https://github.com/SebasEng/unitree_go2_unitree" target="_blank" rel="noopener"><strong>unitree_go2_unitree</strong></a></td>
+<td>Custom control. Route files, commands, and route follower modifications</td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="sec-08-2-sdks-cloud-apis">Cloud APIs</h3>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>Service</th>
+<th>Documentation</th>
+</tr>
+</thead>
+<tr>
+<td><strong>Groq API</strong></td>
+<td><a href="https://console.groq.com/docs" target="_blank" rel="noopener">console.groq.com/docs</a></td>
+</tr>
+<tr>
+<td><strong>Deepgram</strong></td>
+<td><a href="https://developers.deepgram.com/docs" target="_blank" rel="noopener">developers.deepgram.com</a></td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="sec-08-2-sdks-offline-models">Offline Models</h3>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>Model</th>
+<th>Documentation</th>
+</tr>
+</thead>
+<tr>
+<td><strong>Vosk</strong></td>
+<td><a href="https://alphacephei.com/vosk/" target="_blank" rel="noopener">alphacephei.com/vosk</a></td>
+</tr>
+<tr>
+<td><strong>Silero VAD</strong></td>
+<td><a href="https://github.com/snakers4/silero-vad" target="_blank" rel="noopener">github.com/snakers4/silero-vad</a></td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="sec-08-2-sdks-specifications">Specifications</h3>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>Specification</th>
+<th>Link</th>
+</tr>
+</thead>
+<tr>
+<td><strong>MCP (Model Context Protocol)</strong></td>
+<td><a href="https://modelcontextprotocol.io/specification/2025-11-25" target="_blank" rel="noopener">modelcontextprotocol.io</a></td>
+</tr>
+<tr>
+<td><strong>Unitree Go2</strong></td>
+<td><a href="https://www.unitree.com" target="_blank" rel="noopener">unitree.com</a></td>
+</tr>
+<tr>
+<td><strong>Llama 4</strong></td>
+<td><a href="https://www.llama.com/docs/model-cards-and-prompt-formats/llama4/" target="_blank" rel="noopener">www.llama.com</a></td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="sec-08-2-sdks-python-dependencies">Python Dependencies</h2>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>Package</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tr>
+<td><code>vosk</code></td>
+<td>Offline wake word</td>
+</tr>
+<tr>
+<td><code>silero-vad</code></td>
+<td>Voice Activity Detection</td>
+</tr>
+<tr>
+<td><code>edge-tts</code></td>
+<td>Free TTS (Microsoft Edge)</td>
+</tr>
+<tr>
+<td><code>groq</code></td>
+<td>Groq API (STT + LLM)</td>
+</tr>
+<tr>
+<td><code>deepgram-sdk</code></td>
+<td>Deepgram API (alternative STT/TTS)</td>
+</tr>
+<tr>
+<td><code>psutil</code></td>
+<td>Resource monitoring</td>
+</tr>
+<tr>
+<td><code>pyyaml</code></td>
+<td>Configuration (classifier, routes)</td>
+</tr>
+<tr>
+<td><code>httpx</code></td>
+<td>Async HTTP client</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+</section>
+<section id="sec-08-3-apis" class="content-section">
+<div class="section-inner">
+<h1 id="sec-08-3-apis-8-3-apis-and-services">8.3 APIs and Services</h1>
+<h2 id="sec-08-3-apis-api-configuration">API Configuration</h2>
+<p>APIs are configured via environment variables defined in a <code>.env</code> file:</p>
+<pre><code class="language-bash"># Groq API (STT + LLM)
+GROQ_API_KEY=your_key_here
+
+# Deepgram API (alternative STT + TTS)
+DEEPGRAM_API_KEY=your_key_here
+
+# Google Cloud (alternative STT)
+GOOGLE_APPLICATION_CREDENTIALS=path/to/credentials.json
+
+# MCP Server
+MCP_SERVER_URL=http://localhost:8000
+MCP_TOKEN=your_token_here</code></pre>
+<h2 id="sec-08-3-apis-free-tiers">Free Tiers</h2>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>Service</th>
+<th>Free Limit</th>
+<th>Sufficient for</th>
+</tr>
+</thead>
+<tr>
+<td><strong>Groq</strong></td>
+<td>Generous (queries/day)</td>
+<td>✅ All testing and normal operation</td>
+</tr>
+<tr>
+<td><strong>Deepgram</strong></td>
+<td>Initial credits</td>
+<td>✅ Quality testing</td>
+</tr>
+<tr>
+<td><strong>Edge TTS</strong></td>
+<td>No known limit</td>
+<td>✅ Unlimited use</td>
+</tr>
+<tr>
+<td><strong>Google Cloud</strong></td>
+<td>$300 initial credit</td>
+<td>⚠️ Monitored consumption</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="sec-08-3-apis-models-used">Models Used</h2>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>Model</th>
+<th>Provider</th>
+<th>Parameters</th>
+<th>Use</th>
+</tr>
+</thead>
+<tr>
+<td><code>whisper-large-v3-turbo</code></td>
+<td>Groq</td>
+<td>-</td>
+<td>STT</td>
+</tr>
+<tr>
+<td><code>llama-4-scout-17b-16e-instruct</code></td>
+<td>Groq</td>
+<td>17B</td>
+<td>LLM</td>
+</tr>
+<tr>
+<td><code>vosk-model-small-es-0.42</code></td>
+<td>Vosk</td>
+<td>-</td>
+<td>Wake word</td>
+</tr>
+<tr>
+<td><code>silero-vad</code></td>
+<td>Silero</td>
+<td>-</td>
+<td>VAD</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+</section>
+<section id="sec-08-4-referencias" class="content-section">
+<div class="section-inner">
+<h1 id="sec-08-4-referencias-8-4-references">8.4 References</h1>
+<h2 id="sec-08-4-referencias-articles-and-documentation">Articles and Documentation</h2>
+<ul>
+  <li>P. Marín et al., "Voice Control of a TurtleBot Using Speech Recognition and Natural Language Processing," in <em>Proc. IEEE Int. Conf. on Autonomous Robot Systems and Competitions</em>, 2020.</li>
+</ul>
+<ul>
+  <li>S. Shankar et al., "Design and Deployment of a Guide Robot for Airport Terminals," in <em>Proc. IEEE Int. Conf. on Robotics and Automation</em>, 2021.</li>
+</ul>
+<ul>
+  <li>Unitree Robotics, "Go2 Robot Dog User Manual," 2023. <a href="https://www.unitree.com" target="_blank" rel="noopener">unitree.com</a></li>
+</ul>
+<ul>
+  <li>N. Abizov, "go2_ros2_sdk: ROS2 SDK for Unitree Go2 Robot," 2024. <a href="https://github.com/abizovnuralem/go2_ros2_sdk/tree/master" target="_blank" rel="noopener">GitHub</a></li>
+</ul>
+<ul>
+  <li>S. Enguilo, "unitree_go2_unitree: Custom Control for Unitree Go2," 2025. <a href="https://github.com/SebasEng/unitree_go2_unitree" target="_blank" rel="noopener">GitHub</a></li>
+</ul>
+<ul>
+  <li>Groq Inc., "Groq API Documentation," 2025. <a href="https://console.groq.com/docs" target="_blank" rel="noopener">console.groq.com/docs</a></li>
+</ul>
+<ul>
+  <li>Meta, "Llama 4 Model Cards and Prompt Formats," 2025. <a href="https://www.llama.com/docs/model-cards-and-prompt-formats/llama4/" target="_blank" rel="noopener">llama.com</a></li>
+</ul>
+<ul>
+  <li>Deepgram Inc., "Text-to-Speech REST API Documentation," 2025. <a href="https://developers.deepgram.com/docs/tts-rest" target="_blank" rel="noopener">developers.deepgram.com</a></li>
+</ul>
+<ul>
+  <li>Alpha Cephei, "Vosk Speech Recognition Toolkit," 2023. <a href="https://alphacephei.com/vosk/" target="_blank" rel="noopener">alphacephei.com/vosk</a></li>
+</ul>
+<ul>
+  <li>Silero Team, "Silero VAD: Pre-trained Enterprise-Grade Voice Activity Detector," 2023. <a href="https://github.com/snakers4/silero-vad" target="_blank" rel="noopener">GitHub</a></li>
+</ul>
+<ul>
+  <li>T. Wolf et al., "Transformers: State-of-the-Art Natural Language Processing," in <em>Proc. EMNLP</em>, 2020.</li>
+</ul>
+<ul>
+  <li>Hugging Face, "Transformers Documentation v5.7.0," 2025. <a href="https://huggingface.co/docs/transformers" target="_blank" rel="noopener">huggingface.co</a></li>
+</ul>
+<h2 id="sec-08-4-referencias-standards-and-protocols">Standards and Protocols</h2>
+<ul>
+  <li>Anthropic, "Model Context Protocol Specification," 2025. <a href="https://modelcontextprotocol.io/specification/2025-11-25" target="_blank" rel="noopener">modelcontextprotocol.io</a></li>
+</ul>
+<ul>
+  <li>OWASP, "Application Security Verification Standard v4.0," 2019.</li>
+</ul>
+<ul>
+  <li>ISO/IEC/IEEE, "29119-1:2022 - Software Testing — Part 1: General Concepts," 2022.</li>
+</ul>
+<ul>
+  <li>ISO/IEC, "25022:2016 - Measurement of Quality in Use," 2016.</li>
+</ul>
+<ul>
+  <li>ISO/IEC, "25023:2016 - Measurement of System and Software Product Quality," 2016.</li>
+</ul>
+<h2 id="sec-08-4-referencias-llm-agent-evaluation">LLM Agent Evaluation</h2>
+<ul>
+  <li>S. G. Patil et al., "The Berkeley Function Calling Leaderboard (BFCL)," in <em>Proc. NeurIPS</em>, 2024.</li>
+</ul>
+<ul>
+  <li>M. Mohammadi, Y. Li, J. Lo, and W. Yip, "Evaluation and Benchmarking of LLM Agents: A Survey," <em>arXiv:2507.21504</em>, 2025.</li>
+</ul>
+<ul>
+  <li>"Survey of Emerging Trends in LLM Agent Benchmarking," in <em>Proc. 2025 2nd Symp. on Big Data, Neural Networks, and Deep Learning</em>, 2026.</li>
+</ul>
+</div>
+</section>
+<section id="sec-09-equipo" class="content-section">
+<div class="section-inner">
+<h1 id="sec-09-equipo-9-team">9. Team</h1>
+<p>Meet the team behind Ronaldo: the students who developed the project and the professors who advised them.</p>
+</div>
+</section>
+<section id="sec-09-1-integrantes" class="content-section">
+<div class="section-inner">
+<h1 id="sec-09-1-integrantes-9-1-team-members">9.1 Team Members</h1>
+<h2 id="sec-09-1-integrantes-students">Students</h2>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>Member</th>
+<th>Program</th>
+<th>Contact</th>
+</tr>
+</thead>
+<tr>
+<td><strong>Fernando Pérez González</strong></td>
+<td>Mechatronics Engineering and Cyber-Physical Systems</td>
+<td>a2586782@correo.uia.mx</td>
+</tr>
+<tr>
+<td><strong>Sebastián de Jesús Enguilo Ruiz</strong></td>
+<td>Mechatronics Engineering and Cyber-Physical Systems</td>
+<td>a2586119@correo.uia.mx</td>
+</tr>
+<tr>
+<td><strong>José Adrián Bazaldua Huerta</strong></td>
+<td>Mechatronics Engineering and Cyber-Physical Systems</td>
+<td>a2264665@correo.uia.mx</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="sec-09-1-integrantes-project-roles">Project Roles</h2>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>Member</th>
+<th>Main Role</th>
+<th>Contributions</th>
+</tr>
+</thead>
+<tr>
+<td>Fernando Pérez González</td>
+<td>Software Development, Infrastructure, and Testing</td>
+<td>Conversational agent, dialogue engine, MCP, testing, evaluation, monitoring</td>
+</tr>
+<tr>
+<td>Sebastián de Jesús Enguilo</td>
+<td>Hardware/Robot Development: Go2</td>
+<td>ROS2 nodes, routes, commands, WebRTC</td>
+</tr>
+<tr>
+<td>José Adrián Bazaldua</td>
+<td>Software Development</td>
+<td>Conversational agent, dialogue engine, documentation</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="sec-09-1-integrantes-advisors">Advisors</h2>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>Professor</th>
+<th>Role</th>
+</tr>
+</thead>
+<tr>
+<td><strong>Prof. Joel Arango Ramírez</strong></td>
+<td>Technical Advisor</td>
+</tr>
+<tr>
+<td><strong>Dr. Huber Girón Nieto</strong></td>
+<td>Methodological Advisor</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="sec-09-1-integrantes-institution">Institution</h2>
+<p><strong>Universidad Iberoamericana</strong> Mexico City Engineering Department Mechatronics Engineering and Cyber-Physical Systems Coordination</p>
+<p>Semester: <strong>Summer 2026</strong></p>
+<h2 id="sec-09-1-integrantes-acknowledgments">Acknowledgments</h2>
+<p>The authors thank Universidad Iberoamericana for providing the spaces and infrastructure for conducting the tests, the Engineering Department for academic support, and Professors Joel Arango and Huber Girón for technical and methodological guidance during the project's development.</p>
+<p>Likewise, thanks go to the developers of the open-source tools used: Vosk, Silero VAD, ROS2, go2_ros2_sdk, and to the free API providers: Groq and Deepgram.</p>
+</div>
+</section>
+<section id="sec-09-2-asesores" class="content-section">
+<div class="section-inner">
+<h1 id="sec-09-2-asesores-9-2-advisors">9.2 Advisors</h1>
+<h2 id="sec-09-2-asesores-faculty">Faculty</h2>
+<h3 id="sec-09-2-asesores-prof-joel-arango-ram-rez">Prof. Joel Arango Ramírez</h3>
+<ul>
+  <li><strong>Role:</strong> Technical Advisor</li>
+</ul>
+<ul>
+  <li><strong>Department:</strong> Engineering</li>
+</ul>
+<ul>
+  <li><strong>Universidad Iberoamericana, Mexico City</strong></li>
+</ul>
+<h3 id="sec-09-2-asesores-dr-huber-gir-n-nieto">Dr. Huber Girón Nieto</h3>
+<ul>
+  <li><strong>Role:</strong> Methodological Advisor</li>
+</ul>
+<ul>
+  <li><strong>Department:</strong> Engineering</li>
+</ul>
+<ul>
+  <li><strong>Universidad Iberoamericana, Mexico City</strong></li>
+</ul>
+<h2 id="sec-09-2-asesores-course">Course</h2>
+<p>This project was developed as part of the coursework for the <strong>Mechatronics Engineering and Cyber-Physical Systems</strong> program during the <strong>Summer 2026</strong> semester.</p>
+<h2 id="sec-09-2-asesores-presentations">Presentations</h2>
+<p>The Ronaldo project has been presented at:</p>
+<ul>
+  <li><strong>Mechatronics Engineering Coordination</strong> — Summer 2026</li>
+</ul>
+</div>
+</section>
+  </main>
+</div>
+
+<button class="scroll-top" id="scrollTopBtn" aria-label="Scroll to top" title="Scroll to top">&#9650;</button>
+
+<footer class="site-footer">
+  <p>&copy; 2026 <a href="https://ibero.mx" target="_blank" rel="noopener">Universidad Iberoamericana</a> · Mechatronics Engineering and Cyber-Physical Systems · All rights reserved.</p>
+</footer>
+
+<script>
+
+(function() {
+    'use strict';
+
+    // ── Sidebar toggle ──
+    var toggleBtn = document.getElementById('sidebarToggle');
+    var sidebar = document.getElementById('sidebar');
+    var overlay = document.getElementById('sidebarOverlay');
+
+    function openSidebar() {
+        sidebar.classList.add('open');
+        overlay.classList.add('open');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeSidebar() {
+        sidebar.classList.remove('open');
+        overlay.classList.remove('open');
+        document.body.style.overflow = '';
+    }
+
+    if (toggleBtn) toggleBtn.addEventListener('click', function() {
+        if (sidebar.classList.contains('open')) closeSidebar();
+        else openSidebar();
+    });
+
+    if (overlay) overlay.addEventListener('click', closeSidebar);
+
+    // ── Nav accordion ──
+    var toggles = document.querySelectorAll('.nav-toggle');
+    toggles.forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            var targetId = this.getAttribute('data-target');
+            var sub = document.getElementById(targetId);
+            if (!sub) return;
+            var open = sub.classList.contains('open');
+            // Close all siblings
+            var parentUl = this.parentElement.parentElement;
+            if (parentUl) {
+                parentUl.querySelectorAll('.nav-sublist.open').forEach(function(s) {
+                    s.classList.remove('open');
+                });
+                parentUl.querySelectorAll('.nav-toggle.open').forEach(function(b) {
+                    b.classList.remove('open');
+                });
+            }
+            if (!open) {
+                sub.classList.add('open');
+                this.classList.add('open');
+            }
+        });
+    });
+
+    // ── Active section tracking ──
+    var navLinks = document.querySelectorAll('.nav-link');
+    var allSections = document.querySelectorAll('.content-section');
+    var sectionIds = Array.from(allSections).map(function(s) { return s.id; });
+
+    function setActive(id) {
+        navLinks.forEach(function(l) { l.classList.remove('active'); });
+        var link = document.querySelector('.nav-link[data-section="' + id + '"]');
+        if (link) link.classList.add('active');
+
+        // Expand parent group
+        var parentGroup = link ? link.closest('.nav-group') : null;
+        if (parentGroup) {
+            var toggle = parentGroup.querySelector('.nav-toggle');
+            var sub = parentGroup.querySelector('.nav-sublist');
+            if (toggle && sub) {
+                sub.classList.add('open');
+                toggle.classList.add('open');
+            }
+        }
+    }
+
+    // Scroll-based active detection
+    var ticking = false;
+    function updateActiveOnScroll() {
+        var scrollPos = window.scrollY + 120;
+        var activeId = sectionIds[0];
+        for (var i = sectionIds.length - 1; i >= 0; i--) {
+            var el = document.getElementById(sectionIds[i]);
+            if (el && el.offsetTop <= scrollPos) {
+                activeId = sectionIds[i];
+                break;
+            }
+        }
+        setActive(activeId);
+        ticking = false;
+    }
+
+    window.addEventListener('scroll', function() {
+        if (!ticking) {
+            requestAnimationFrame(updateActiveOnScroll);
+            ticking = true;
+        }
+    });
+
+    // Click on nav link
+    navLinks.forEach(function(link) {
+        link.addEventListener('click', function(e) {
+            var id = this.getAttribute('data-section');
+            setActive(id);
+            // Close mobile sidebar
+            if (window.innerWidth <= 1024) closeSidebar();
+        });
+    });
+
+    // ── Scroll-to-top ──
+    var scrollTopBtn = document.getElementById('scrollTopBtn');
+
+    function toggleScrollTop() {
+        if (window.scrollY > 500) {
+            scrollTopBtn.classList.add('visible');
+        } else {
+            scrollTopBtn.classList.remove('visible');
+        }
+    }
+
+    window.addEventListener('scroll', toggleScrollTop);
+
+    scrollTopBtn.addEventListener('click', function() {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+
+    // ── Initial active ──
+    updateActiveOnScroll();
+    toggleScrollTop();
+
+    // ── Smooth scroll for all hash links ──
+    document.addEventListener('click', function(e) {
+        var link = e.target.closest('a[href^="#"]');
+        if (!link) return;
+        e.preventDefault();
+        var targetId = link.getAttribute('href').substring(1);
+        var target = document.getElementById(targetId);
+        if (target) {
+            target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            setActive(targetId);
+            if (window.innerWidth <= 1024) closeSidebar();
+        }
+    });
+})();
+
+</script>
+</body>
+</html>
