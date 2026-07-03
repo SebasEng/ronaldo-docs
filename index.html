@@ -871,9 +871,11 @@ body {
 </ul>
 <hr>
 <h2 id="sec-index-navegaci-n-r-pida">Navegación Rápida</h2>
-<p><a href="#sec-resumen" target="_blank" rel="noopener">Resumen del Proyecto</a> · <a href="#sec-02-arquitectura" target="_blank" rel="noopener">Arquitectura</a> · <a href="#sec-03-agente" target="_blank" rel="noopener">Agente Conversacional</a> · <a href="#sec-04-robot" target="_blank" rel="noopener">Control del Robot</a> · <a href="#sec-06-resultados" target="_blank" rel="noopener">Resultados</a> · <a href="https://github.com/Rimuru022/Agentic-Unitree-Control" target="_blank" rel="noopener">Repositorio GitHub</a></p>
+<p><a href="#sec-resumen" target="_blank" rel="noopener">Resumen del Proyecto</a> · <a href="#sec-02-arquitectura" target="_blank" rel="noopener">Arquitectura</a> · <a href="#sec-03-agente" target="_blank" rel="noopener">Agente Conversacional</a> · <a href="#sec-04-robot" target="_blank" rel="noopener">Control del Robot</a> · <a href="#sec-06-resultados" target="_blank" rel="noopener">Resultados</a> · <a href="https://github.com/Rimuru022/Agentic-Unitree-Control" target="_blank" rel="noopener">Repositorio GitHub</a> · <a href="https://adr1anbaz.github.io/prospectivaTecno/" target="_blank" rel="noopener">Prácticas Prospectiva</a></p>
 <hr>
 <p>© 2026 — Universidad Iberoamericana · Ingeniería Mecatrónica y Sistemas Ciberfísicos</p>
+<hr>
+<p><strong><a href="https://adr1anbaz.github.io/prospectivaTecno/" target="_blank" rel="noopener">Prácticas de Prospectiva Tecnológica</a></strong> — Repositorio de prácticas previas que fundamentan este proyecto.</p>
 </div>
 </section>
 <section id="sec-resumen" class="content-section">
@@ -1069,7 +1071,7 @@ body {
 <ul>
   <li><strong>Interpretar comandos semánticos</strong> expresados en lenguaje natural</li>
 </ul>
-<p>- <em>"Llévame al salón que tenga un proyector 4K"</em> - <em>"Quiero ir al café de la universidad"</em> - <em>"¿Dónde están las máquinas expendedoras?"</em></p>
+<p>- <em>"Llévame al salón que tenga un proyector 4K"</em> ⚠️ <em>Problemas de inferencia de situación: el LLM no siempre logra inferir correctamente que debe buscar un salón con esa característica específica, requiriendo refinamiento en el prompt.</em> - <em>"Quiero ir al café de la universidad"</em> - <em>"¿Dónde están las máquinas expendedoras?"</em></p>
 <ul>
   <li><strong>Traducir intenciones en planes de navegación</strong></li>
 </ul>
@@ -1116,6 +1118,11 @@ body {
 </tr>
 </tbody>
 </table></div>
+<div class="info">
+
+<strong>Capas gratuitas utilizadas</strong>: Groq ofrece 30 RPM / 30K TPM / 500K TPD para Llama 4 Scout, y 20 RPM / 2K RPD para Whisper. Deepgram otorga $200 USD en crédito inicial. Sin llamada a API en el clasificador YAML: no se consumen créditos de Groq en la primera etapa.
+
+</div>
 </div>
 </section>
 <section id="sec-01-3-objetivos" class="content-section">
@@ -1633,6 +1640,7 @@ El robot requiere comandos explícitos del usuario (voz o texto) para ejecutar c
 <p>Una decisión arquitectónica clave en Ronaldo fue <strong>desplazar el procesamiento intensivo a servidores remotos</strong>, manteniendo solo tareas livianas en el hardware local.</p>
 <p><img src="assets/images/diagrama-04-cloud-vs-local.jpg" alt="Diagrama de distribución Cloud vs Local" style="max-width:100%;border-radius:8px;margin:1.5rem 0;"></p>
 <p><em>Figura 4: Distribución del cómputo entre hardware local (Vosk, Silero VAD, Edge TTS) y servicios cloud (Groq Whisper STT, Groq Llama 4 Scout LLM, Servidor MCP, Deepgram Aura-2 TTS).</em></p>
+<p>Los valores de latencia presentados en esta sección se obtuvieron a partir de <strong>50 pruebas</strong> por cada proveedor, realizadas en condiciones controladas de laboratorio.</p>
 <h2 id="sec-02-5-cloud-vs-local-comparativa-de-proveedores">Comparativa de Proveedores</h2>
 <h3 id="sec-02-5-cloud-vs-local-speech-to-text-stt">Speech-to-Text (STT)</h3>
 <div class="table-wrapper"><table>
@@ -1796,6 +1804,7 @@ El bajo consumo se debe a que el procesamiento intensivo (STT, LLM, TTS) se ejec
 <p>El pipeline de voz de Ronaldo transforma una pregunta hablada en una respuesta audible en aproximadamente <strong>1.6 segundos</strong>.</p>
 <p><img src="assets/images/diagrama-05-pipeline-voz.jpg" alt="Diagrama del Pipeline de Voz" style="max-width:100%;border-radius:8px;margin:1.5rem 0;"></p>
 <p><em>Figura 5: Pipeline completo de procesamiento de voz. Flujo: Micrófono (16 kHz, 512 muestras) → Wake Word Vosk (< 200 ms) → Silero VAD → Groq Whisper STT (~750 ms) → Clasificador YAML+LLM → Groq Llama 4 Scout (~350 ms) → Edge TTS (~500 ms) → Altavoz. Tiempo total del pipeline: ~1.6 segundos.</em></p>
+<p>Los valores presentados en el desglose se obtuvieron de <strong>50 ejecuciones</strong> del pipeline completo, midiendo cada etapa individualmente.</p>
 <h2 id="sec-03-1-pipeline-voz-desglose-de-latencia">Desglose de Latencia</h2>
 <div class="table-wrapper"><table>
 <thead>
@@ -2307,7 +2316,7 @@ commands:
   <li><strong>Latencia < 1 ms</strong>: comparación de strings instantánea</li>
 </ul>
 <ul>
-  <li><strong>Sin llamada a API</strong>: no consume créditos de Groq</li>
+  <li><strong>Sin llamada a API</strong>: no consume créditos de Groq en esta etapa</li>
 </ul>
 <ul>
   <li><strong>Determinista</strong>: 100% predecible para comandos conocidos</li>
@@ -2315,6 +2324,11 @@ commands:
 <ul>
   <li><strong>Recall perfecto en navegación</strong>: 100% en pruebas</li>
 </ul>
+<div class="note">
+
+<strong>Nota sobre consumo de tokens</strong>: Aunque el clasificador YAML no consume créditos, la segunda etapa (LLM) <strong>sí utiliza tokens</strong> de Groq. Sin embargo, al estar dentro de la capa gratuita de Groq (30K TPM, 500K TPD para Llama 4 Scout), estos tokens <strong>no generan costo</strong>. Deepgram también opera con su crédito inicial de $200 USD sin costo adicional durante las pruebas.
+
+</div>
 <h2 id="sec-03-5-clasificacion-segunda-etapa-llm-con-tool-calling">Segunda Etapa: LLM con Tool Calling</h2>
 <p>Cuando el clasificador YAML no reconoce el comando, el texto se envía al modelo de lenguaje:</p>
 <ul>
@@ -2829,7 +2843,7 @@ Nombre del usuario: Armando
 <tr>
 <td>BalanceStand</td>
 <td>1002</td>
-<td>Modo equilibrio sobre dos patas</td>
+<td>❌ No funcional — no implementado</td>
 </tr>
 <tr>
 <td>Damp</td>
@@ -2839,7 +2853,7 @@ Nombre del usuario: Armando
 <tr>
 <td>StopMove</td>
 <td>1003</td>
-<td>Detener todo movimiento</td>
+<td>❌ No funcional — no implementado</td>
 </tr>
 </tbody>
 </table></div>
@@ -2865,7 +2879,7 @@ Nombre del usuario: Armando
 <tr>
 <td>Dance2</td>
 <td>1023</td>
-<td>Baile coreografiado 2</td>
+<td>❌ No funcional — no implementado</td>
 </tr>
 <tr>
 <td>FrontFlip</td>
@@ -2880,12 +2894,12 @@ Nombre del usuario: Armando
 <tr>
 <td>Handstand</td>
 <td>1301</td>
-<td>Parada de manos</td>
+<td>❌ No funcional — no implementado</td>
 </tr>
 <tr>
 <td>Bound</td>
 <td>1304</td>
-<td>Saltos consecutivos</td>
+<td>❌ No funcional — no implementado</td>
 </tr>
 </tbody>
 </table></div>
@@ -3416,6 +3430,10 @@ Nombre del usuario: Armando
 <div class="warning">
 
 <strong>Limitación importante</strong>: Todas las rutas asumen inicio desde el <strong>Laboratorio de Robótica</strong>. No hay rutas desde otros orígenes. Esta es una de las principales líneas de trabajo futuro (ver <a href="/docs/07-futuro/" target="_blank" rel="noopener">Capítulo 7</a>).
+</div>
+<div class="highlight">
+
+<strong>Navegación determinista, no reactiva</strong>: La navegación sigue rutas predefinidas mediante odometría (modos odométrico y temporal). El LiDAR 360° y la cámara de profundidad del Go2 están disponibles pero <strong>no se utilizan para evasión de obstáculos</strong> en la configuración actual. La ruta es correcta, pero <strong>no tiene corrección automática</strong> — si hay un obstáculo inesperado, el robot no lo detecta ni lo evade. Esta funcionalidad queda como trabajo futuro (ver <a href="/docs/07-futuro/" target="_blank" rel="noopener">Capítulo 7</a>).
 </div>
 <h2 id="sec-04-6-rutas-nota-sobre-las-pruebas-de-navegaci-n">Nota sobre las Pruebas de Navegación</h2>
 <div class="highlight">
@@ -3960,10 +3978,6 @@ Todas las rutas de navegación asumen que el robot <strong>parte del Laboratorio
 <td>"¿Hay máquinas expendedoras cerca?"</td>
 <td><code>search_products</code></td>
 </tr>
-<tr>
-<td>"¿Qué lugares están abiertos a esta hora?"</td>
-<td><code>search_places</code> + <code>campus_context</code></td>
-</tr>
 </tbody>
 </table></div>
 </div>
@@ -3973,6 +3987,11 @@ Todas las rutas de navegación asumen que el robot <strong>parte del Laboratorio
 <h1 id="sec-05-3-escenarios-5-3-escenarios-de-uso">5.3 Escenarios de Uso</h1>
 <h2 id="sec-05-3-escenarios-casos-de-uso-t-picos">Casos de Uso Típicos</h2>
 <p>Ronaldo está diseñado para asistir a diferentes tipos de visitantes en el campus de la UIA. <strong>El sistema es genérico y puede adaptarse a cualquier ubicación</strong>; estos escenarios ilustran su aplicación en el contexto universitario como primer caso de validación.</p>
+<div class="info">
+
+<strong>Nota del proyecto</strong>: La ubicación inicial del robot en todos los escenarios es el <strong>Laboratorio de Robótica</strong> (no el Laboratorio de Circuitos). Todas las rutas parten desde este punto fijo.
+
+</div>
 <h3 id="sec-05-3-escenarios-1-visitante-de-primera-vez">1. Visitante de Primera Vez</h3>
 <p>El caso más común y relevante: una persona que <strong>nunca antes ha pisado el campus</strong> y necesita orientación completa. Ronaldo no solo indica direcciones, sino que acompaña físicamente al visitante hasta su destino.</p>
 <pre><code>Visitante:  &quot;Ronaldo, es mi primera vez aquí. ¿Dónde está
@@ -4979,6 +4998,40 @@ El robot cuenta con un <strong>LiDAR de 360°</strong> (profundidad máxima 10 m
 </tr>
 </tbody>
 </table></div>
+<hr>
+<h2 id="sec-07-futuro-conclusiones">Conclusiones</h2>
+<h3 id="sec-07-futuro-lo-que-se-logr">Lo que se logró</h3>
+<ul>
+  <li><strong>Pipeline de voz funcional</strong> de extremo a extremo con latencia total de ~1.6 segundos, desde la palabra de activación hasta la respuesta sintetizada.</li>
+</ul>
+<ul>
+  <li><strong>Clasificador híbrido</strong> (YAML + LLM) con recall perfecto en navegación (100%) y precisión aceptable en conversación.</li>
+</ul>
+<ul>
+  <li><strong>Arquitectura modular</strong> basada en EventBus con 4 procesos independientes, demostrando viabilidad en hardware de bajo costo (Raspberry Pi 5, ~86 MB RAM pico).</li>
+</ul>
+<ul>
+  <li><strong>Sistema de rutas JSON</strong> con dos modos de ejecución (odométrico y temporal) y concatenación de rutas para destinos lejanos.</li>
+</ul>
+<ul>
+  <li><strong>Integración completa</strong> con APIs cloud gratuitas (Groq, Edge TTS, Deepgram) sin generar costos operativos.</li>
+</ul>
+<h3 id="sec-07-futuro-lo-que-se-aprendi">Lo que se aprendió</h3>
+<ul>
+  <li>La <strong>navegación determinista por odometría</strong> funciona para entornos controlados, pero <strong>no es suficiente</strong> para espacios con obstáculos dinámicos o personas. El LiDAR y la cámara de profundidad están disponibles pero requieren integración SLAM para navegación reactiva.</li>
+</ul>
+<ul>
+  <li>El <strong>tool calling del LLM</strong> es poderoso pero impredecible en casos límite: comandos que requieren inferencia contextual (como <em>"Llévame al salón que tenga un proyector 4K"</em>) pueden fallar si el prompt no está finamente ajustado.</li>
+</ul>
+<ul>
+  <li>Las <strong>APIs gratuitas</strong> son suficientes para prototipado y validación, pero un despliegue en producción requeriría monitorear el consumo de tokens y considerar planes de pago.</li>
+</ul>
+<ul>
+  <li>La <strong>arquitectura de procesos independientes</strong> demostró ser robusta (0% pérdida de eventos en pruebas de estrés) y facilita el mantenimiento y la extensibilidad del sistema.</li>
+</ul>
+<ul>
+  <li>El <strong>clasificador YAML</strong> es una herramienta valiosa para reducir costos y latencia, pero su mantenimiento manual escala mal con el número de destinos y comandos.</li>
+</ul>
 </div>
 </section>
 <section id="sec-08-recursos" class="content-section">
@@ -4995,6 +5048,11 @@ El robot cuenta con un <strong>LiDAR de 360°</strong> (profundidad máxima 10 m
 <div class="highlight">
 
 <a href="https://github.com/Rimuru022/Agentic-Unitree-Control" target="_blank" rel="noopener"><strong>github.com/Rimuru022/Agentic-Unitree-Control</strong></a>
+</div>
+<p>También está disponible el repositorio de prácticas previas que dieron origen a este proyecto:</p>
+<div class="highlight">
+
+<a href="https://adr1anbaz.github.io/prospectivaTecno/" target="_blank" rel="noopener"><strong>github.com/adr1anbaz/prospectivaTecno</strong></a> — Prácticas de prospectiva tecnológica (fundamentos conceptuales)
 </div>
 <h2 id="sec-08-1-repo-estructura-del-repositorio">Estructura del Repositorio</h2>
 <div class="table-wrapper"><table>
@@ -5198,33 +5256,108 @@ GOOGLE_APPLICATION_CREDENTIALS=path/to/credentials.json
 MCP_SERVER_URL=http://localhost:8000
 MCP_TOKEN=your_token_here</code></pre>
 <h2 id="sec-08-3-apis-capas-gratuitas-free-tier">Capas Gratuitas (Free Tier)</h2>
+<h3 id="sec-08-3-apis-l-mites-por-servicio">Límites por Servicio</h3>
 <div class="table-wrapper"><table>
 <thead>
 <tr>
 <th>Servicio</th>
-<th>Límite Gratuito</th>
-<th>Suficiente para</th>
+<th>Modelo</th>
+<th>Límite Free Tier</th>
+<th>Detalle</th>
 </tr>
 </thead>
 <tr>
 <td><strong>Groq</strong></td>
-<td>Generoso (consultas/día)</td>
-<td>✅ Todas las pruebas y operación normal</td>
+<td><code>llama-4-scout-17b-16e-instruct</code></td>
+<td>30 RPM · 1K RPD · 30K TPM · 500K TPD</td>
+<td>Suficiente para todas las pruebas</td>
+</tr>
+<tr>
+<td><strong>Groq</strong></td>
+<td><code>whisper-large-v3-turbo</code></td>
+<td>20 RPM · 2K RPD</td>
+<td>~33 horas de audio/día</td>
 </tr>
 <tr>
 <td><strong>Deepgram</strong></td>
-<td>Créditos iniciales</td>
-<td>✅ Pruebas de calidad</td>
+<td>Nova-3 + Aura-2</td>
+<td>$200 USD crédito inicial</td>
+<td>Sin tarjeta requerida</td>
 </tr>
 <tr>
 <td><strong>Edge TTS</strong></td>
+<td>Microsoft Edge</td>
 <td>Sin límite conocido</td>
-<td>✅ Uso ilimitado</td>
+<td>Uso ilimitado</td>
 </tr>
 <tr>
 <td><strong>Google Cloud</strong></td>
-<td>$300 crédito inicial</td>
-<td>⚠️ Consumo monitoreado</td>
+<td>STT alternativo</td>
+<td>$300 USD crédito inicial</td>
+<td>Consumo monitoreado</td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="sec-08-3-apis-costos-si-se-excediera-el-free-tier">Costos si se excediera el Free Tier</h3>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>Servicio</th>
+<th>Modelo</th>
+<th>Costo estimado</th>
+</tr>
+</thead>
+<tr>
+<td><strong>Deepgram STT</strong></td>
+<td>Nova-3 (streaming)</td>
+<td>$0.0048/min de audio</td>
+</tr>
+<tr>
+<td><strong>Deepgram TTS</strong></td>
+<td>Aura-2</td>
+<td>$0.030/1K caracteres</td>
+</tr>
+<tr>
+<td><strong>Groq</strong></td>
+<td>Pago por uso</td>
+<td>Requiere plan Developer (precios no públicos por modelo)</td>
+</tr>
+</tbody>
+</table></div>
+<div class="highlight">
+
+El proyecto operó completamente dentro de las capas gratuitas. <strong>Ninguna API generó costos reales.</strong> En caso de escalar a producción, los costos estimados serían mínimos para el volumen de uso esperado (~$0.005 por consulta típica de STT + LLM + TTS combinados).
+
+</div>
+<h2 id="sec-08-3-apis-tokenizaci-n-y-consumo">Tokenización y Consumo</h2>
+<p>El clasificador YAML (primera etapa) <strong>no consume tokens</strong>. La segunda etapa (LLM con Tool Calling) sí consume tokens de Groq, pero dentro del free tier no hay costo. Consumo típico por consulta:</p>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>Componente</th>
+<th>Tokens promedio</th>
+<th>Costo free tier</th>
+</tr>
+</thead>
+<tr>
+<td>Clasificador YAML</td>
+<td>0</td>
+<td>$0</td>
+</tr>
+<tr>
+<td>LLM (Llama 4 Scout)</td>
+<td>~150-300 tokens</td>
+<td>$0 (free tier 500K TPD)</td>
+</tr>
+<tr>
+<td>STT (Whisper)</td>
+<td>N/A (audio)</td>
+<td>$0 (free tier 2K RPD)</td>
+</tr>
+<tr>
+<td>TTS (Edge/Deepgram)</td>
+<td>N/A (audio)</td>
+<td>$0 (sin límite / crédito)</td>
 </tr>
 </tbody>
 </table></div>
@@ -5461,6 +5594,7 @@ MCP_TOKEN=your_token_here</code></pre>
 
 <footer class="site-footer">
   <p>&copy; 2026 <a href="https://ibero.mx" target="_blank" rel="noopener">Universidad Iberoamericana</a> · Ingeniería Mecatrónica y Sistemas Ciberfísicos · Todos los derechos reservados.</p>
+  <p style="margin-top: 0.5rem;"><a href="https://adr1anbaz.github.io/prospectivaTecno/" target="_blank" rel="noopener">Prácticas de Prospectiva Tecnológica</a> — Repositorio de prácticas previas.</p>
 </footer>
 
 <script>

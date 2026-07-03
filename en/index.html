@@ -871,9 +871,11 @@ body {
 </ul>
 <hr>
 <h2 id="sec-index-quick-navigation">Quick Navigation</h2>
-<p><a href="#sec-resumen" target="_blank" rel="noopener">Project Summary</a> · <a href="#sec-02-arquitectura" target="_blank" rel="noopener">Architecture</a> · <a href="#sec-03-agente" target="_blank" rel="noopener">Conversational Agent</a> · <a href="#sec-04-robot" target="_blank" rel="noopener">Robot Control</a> · <a href="#sec-06-resultados" target="_blank" rel="noopener">Results</a> · <a href="https://github.com/Rimuru022/Agentic-Unitree-Control" target="_blank" rel="noopener">GitHub Repository</a></p>
+<p><a href="#sec-resumen" target="_blank" rel="noopener">Project Summary</a> · <a href="#sec-02-arquitectura" target="_blank" rel="noopener">Architecture</a> · <a href="#sec-03-agente" target="_blank" rel="noopener">Conversational Agent</a> · <a href="#sec-04-robot" target="_blank" rel="noopener">Robot Control</a> · <a href="#sec-06-resultados" target="_blank" rel="noopener">Results</a> · <a href="https://github.com/Rimuru022/Agentic-Unitree-Control" target="_blank" rel="noopener">GitHub Repository</a> · <a href="https://adr1anbaz.github.io/prospectivaTecno/" target="_blank" rel="noopener">Foresight Practices</a></p>
 <hr>
 <p>© 2026 — Universidad Iberoamericana · Mechatronics Engineering and Cyber-Physical Systems</p>
+<hr>
+<p><strong><a href="https://adr1anbaz.github.io/prospectivaTecno/" target="_blank" rel="noopener">Technological Foresight Practices</a></strong> — Previous practice repository that underpins this project.</p>
 </div>
 </section>
 <section id="sec-resumen" class="content-section">
@@ -1069,7 +1071,7 @@ Is it possible to use free and accessible cloud-based artificial intelligence to
 <ul>
   <li><strong>Interpreting semantic commands</strong> expressed in natural language</li>
 </ul>
-<p>- <em>"Take me to the classroom with a 4K projector"</em> - <em>"I want to go to the university café"</em> - <em>"Where are the vending machines?"</em></p>
+<p>- <em>"Take me to the classroom with a 4K projector"</em> ⚠️ <em>Situational inference issues: the LLM does not always correctly infer that it needs to search for a room with that specific feature, requiring prompt refinement.</em> - <em>"I want to go to the university café"</em> - <em>"Where are the vending machines?"</em></p>
 <ul>
   <li><strong>Translating intentions into navigation plans</strong></li>
 </ul>
@@ -1116,6 +1118,11 @@ Is it possible to use free and accessible cloud-based artificial intelligence to
 </tr>
 </tbody>
 </table></div>
+<div class="info">
+
+<strong>Free tiers used</strong>: Groq offers 30 RPM / 30K TPM / 500K TPD for Llama 4 Scout, and 20 RPM / 2K RPD for Whisper. Deepgram provides $200 USD initial credit. No API call in the YAML classifier: no Groq credits consumed in the first stage.
+
+</div>
 </div>
 </section>
 <section id="sec-01-3-objetivos" class="content-section">
@@ -1633,6 +1640,7 @@ The robot requires explicit user commands (voice or text) to execute any movemen
 <p>A key architectural decision in Ronaldo was to <strong>offload intensive processing to remote servers</strong>, keeping only lightweight tasks on local hardware.</p>
 <p><img src="../assets/images/diagrama-04-cloud-vs-local.jpg" alt="Cloud vs Local distribution diagram" style="max-width:100%;border-radius:8px;margin:1.5rem 0;"></p>
 <p><em>Figure 4: Compute distribution between local hardware (Vosk, Silero VAD, Edge TTS) and cloud services (Groq Whisper STT, Groq Llama 4 Scout LLM, MCP Server, Deepgram Aura-2 TTS).</em></p>
+<p>The latency values presented in this section were obtained from <strong>50 tests</strong> per provider, conducted under controlled laboratory conditions.</p>
 <h2 id="sec-02-5-cloud-vs-local-provider-comparison">Provider Comparison</h2>
 <h3 id="sec-02-5-cloud-vs-local-speech-to-text-stt">Speech-to-Text (STT)</h3>
 <div class="table-wrapper"><table>
@@ -1796,6 +1804,7 @@ The low consumption is because intensive processing (STT, LLM, TTS) runs on remo
 <p>Ronaldo's voice pipeline transforms a spoken question into an audible response in approximately <strong>1.6 seconds</strong>.</p>
 <p><img src="../assets/images/diagrama-05-pipeline-voz.jpg" alt="Voice Pipeline Diagram" style="max-width:100%;border-radius:8px;margin:1.5rem 0;"></p>
 <p><em>Figure 5: Complete voice processing pipeline. Flow: Microphone (16 kHz, 512 samples) → Vosk Wake Word (< 200 ms) → Silero VAD → Groq Whisper STT (~750 ms) → YAML+LLM Classifier → Groq Llama 4 Scout (~350 ms) → Edge TTS (~500 ms) → Speaker. Total pipeline time: ~1.6 seconds.</em></p>
+<p>The values presented in the breakdown were obtained from <strong>50 runs</strong> of the complete pipeline, measuring each stage individually.</p>
 <h2 id="sec-03-1-pipeline-voz-latency-breakdown">Latency Breakdown</h2>
 <div class="table-wrapper"><table>
 <thead>
@@ -2307,7 +2316,7 @@ commands:
   <li><strong>Latency < 1 ms</strong>: instant string comparison</li>
 </ul>
 <ul>
-  <li><strong>No API call</strong>: does not consume Groq credits</li>
+  <li><strong>No API call</strong>: does not consume Groq credits at this stage</li>
 </ul>
 <ul>
   <li><strong>Deterministic</strong>: 100% predictable for known commands</li>
@@ -2315,6 +2324,11 @@ commands:
 <ul>
   <li><strong>Perfect navigation recall</strong>: 100% in tests</li>
 </ul>
+<div class="note">
+
+<strong>Note on token consumption</strong>: Although the YAML classifier does not consume credits, the second stage (LLM) <strong>does use tokens</strong> from Groq. However, being within Groq's free tier (30K TPM, 500K TPD for Llama 4 Scout), these tokens <strong>incur no cost</strong>. Deepgram also operates on its initial $200 USD credit with no additional cost during testing.
+
+</div>
 <h2 id="sec-03-5-clasificacion-second-stage-llm-with-tool-calling">Second Stage: LLM with Tool Calling</h2>
 <p>When the YAML classifier does not recognize the command, the text is sent to the language model:</p>
 <ul>
@@ -2830,7 +2844,7 @@ Last query: food
 <tr>
 <td>BalanceStand</td>
 <td>1002</td>
-<td>Balance mode on two legs</td>
+<td>❌ Not functional — not implemented</td>
 </tr>
 <tr>
 <td>Damp</td>
@@ -2840,7 +2854,7 @@ Last query: food
 <tr>
 <td>StopMove</td>
 <td>1003</td>
-<td>Stop all movement</td>
+<td>❌ Not functional — not implemented</td>
 </tr>
 </tbody>
 </table></div>
@@ -2866,7 +2880,7 @@ Last query: food
 <tr>
 <td>Dance2</td>
 <td>1023</td>
-<td>Choreographed dance 2</td>
+<td>❌ Not functional — not implemented</td>
 </tr>
 <tr>
 <td>FrontFlip</td>
@@ -2881,12 +2895,12 @@ Last query: food
 <tr>
 <td>Handstand</td>
 <td>1301</td>
-<td>Handstand</td>
+<td>❌ Not functional — not implemented</td>
 </tr>
 <tr>
 <td>Bound</td>
 <td>1304</td>
-<td>Consecutive jumps</td>
+<td>❌ Not functional — not implemented</td>
 </tr>
 </tbody>
 </table></div>
@@ -3417,6 +3431,10 @@ Last query: food
 <div class="warning">
 
 <strong>Important limitation</strong>: All routes assume starting from the <strong>Robotics Laboratory</strong>. There are no routes from other origins. This is one of the main lines of future work (see <a href="/docs/07-futuro/" target="_blank" rel="noopener">Chapter 7</a>).
+</div>
+<div class="highlight">
+
+<strong>Deterministic, non-reactive navigation</strong>: Navigation follows predefined routes using odometry (odometric and time modes). The Go2's 360° LiDAR and depth camera are available but <strong>not used for obstacle avoidance</strong> in the current configuration. The route is correct, but <strong>it has no automatic correction</strong> — if there is an unexpected obstacle, the robot does not detect or evade it. This functionality remains as future work (see <a href="/docs/07-futuro/" target="_blank" rel="noopener">Chapter 7</a>).
 </div>
 <h2 id="sec-04-6-rutas-note-on-navigation-testing">Note on Navigation Testing</h2>
 <div class="highlight">
@@ -3961,10 +3979,6 @@ All navigation routes assume the robot <strong>departs from the Robotics Laborat
 <td>"Are there vending machines nearby?"</td>
 <td><code>search_products</code></td>
 </tr>
-<tr>
-<td>"What places are open right now?"</td>
-<td><code>search_places</code> + <code>campus_context</code></td>
-</tr>
 </tbody>
 </table></div>
 </div>
@@ -3974,6 +3988,11 @@ All navigation routes assume the robot <strong>departs from the Robotics Laborat
 <h1 id="sec-05-3-escenarios-5-3-usage-scenarios">5.3 Usage Scenarios</h1>
 <h2 id="sec-05-3-escenarios-typical-use-cases">Typical Use Cases</h2>
 <p>Ronaldo is designed to assist different types of visitors on the UIA campus. <strong>The system is generic and can be adapted to any location</strong>; these scenarios illustrate its application in the university context as the first validation case.</p>
+<div class="info">
+
+<strong>Project note</strong>: The robot's initial location in all scenarios is the <strong>Robotics Laboratory</strong> (not the Circuits Laboratory). All routes start from this fixed point.
+
+</div>
 <h3 id="sec-05-3-escenarios-1-first-time-visitor">1. First-Time Visitor</h3>
 <p>The most common and relevant case: a person who has <strong>never set foot on campus</strong> and needs complete orientation. Ronaldo not only gives directions but physically accompanies the visitor to their destination.</p>
 <pre><code>Visitor:    &quot;Ronaldo, it&#x27;s my first time here. Where is
@@ -4980,6 +4999,40 @@ The robot features a <strong>360° LiDAR</strong> (maximum depth 10 m), an <stro
 </tr>
 </tbody>
 </table></div>
+<hr>
+<h2 id="sec-07-futuro-conclusions">Conclusions</h2>
+<h3 id="sec-07-futuro-what-was-achieved">What was achieved</h3>
+<ul>
+  <li><strong>End-to-end functional voice pipeline</strong> with total latency of ~1.6 seconds, from wake word to synthesized response.</li>
+</ul>
+<ul>
+  <li><strong>Hybrid classifier</strong> (YAML + LLM) with perfect navigation recall (100%) and acceptable conversation accuracy.</li>
+</ul>
+<ul>
+  <li><strong>Modular architecture</strong> based on EventBus with 4 independent processes, demonstrating viability on low-cost hardware (Raspberry Pi 5, ~86 MB peak RAM).</li>
+</ul>
+<ul>
+  <li><strong>JSON route system</strong> with two execution modes (odometric and time-based) and route concatenation for distant destinations.</li>
+</ul>
+<ul>
+  <li><strong>Complete integration</strong> with free cloud APIs (Groq, Edge TTS, Deepgram) without generating operational costs.</li>
+</ul>
+<h3 id="sec-07-futuro-what-was-learned">What was learned</h3>
+<ul>
+  <li><strong>Deterministic odometry-based navigation</strong> works for controlled environments but <strong>is not sufficient</strong> for spaces with dynamic obstacles or people. The LiDAR and depth camera are available but require SLAM integration for reactive navigation.</li>
+</ul>
+<ul>
+  <li><strong>LLM tool calling</strong> is powerful but unpredictable in edge cases: commands requiring contextual inference (such as <em>"Take me to the room with a 4K projector"</em>) can fail if the prompt is not finely tuned.</li>
+</ul>
+<ul>
+  <li><strong>Free APIs</strong> are sufficient for prototyping and validation, but a production deployment would require monitoring token consumption and considering paid plans.</li>
+</ul>
+<ul>
+  <li>The <strong>independent process architecture</strong> proved robust (0% event loss in stress tests) and facilitates system maintenance and extensibility.</li>
+</ul>
+<ul>
+  <li>The <strong>YAML classifier</strong> is a valuable tool for reducing costs and latency, but its manual maintenance scales poorly with the number of destinations and commands.</li>
+</ul>
 </div>
 </section>
 <section id="sec-08-recursos" class="content-section">
@@ -4996,6 +5049,11 @@ The robot features a <strong>360° LiDAR</strong> (maximum depth 10 m), an <stro
 <div class="highlight">
 
 <a href="https://github.com/Rimuru022/Agentic-Unitree-Control" target="_blank" rel="noopener"><strong>github.com/Rimuru022/Agentic-Unitree-Control</strong></a>
+</div>
+<p>The previous practice repository that laid the groundwork for this project is also available:</p>
+<div class="highlight">
+
+<a href="https://adr1anbaz.github.io/prospectivaTecno/" target="_blank" rel="noopener"><strong>github.com/adr1anbaz/prospectivaTecno</strong></a> — Technological foresight practices (conceptual foundations)
 </div>
 <h2 id="sec-08-1-repo-repository-structure">Repository Structure</h2>
 <div class="table-wrapper"><table>
@@ -5199,33 +5257,108 @@ GOOGLE_APPLICATION_CREDENTIALS=path/to/credentials.json
 MCP_SERVER_URL=http://localhost:8000
 MCP_TOKEN=your_token_here</code></pre>
 <h2 id="sec-08-3-apis-free-tiers">Free Tiers</h2>
+<h3 id="sec-08-3-apis-limits-per-service">Limits per Service</h3>
 <div class="table-wrapper"><table>
 <thead>
 <tr>
 <th>Service</th>
-<th>Free Limit</th>
-<th>Sufficient for</th>
+<th>Model</th>
+<th>Free Tier Limit</th>
+<th>Detail</th>
 </tr>
 </thead>
 <tr>
 <td><strong>Groq</strong></td>
-<td>Generous (queries/day)</td>
-<td>✅ All testing and normal operation</td>
+<td><code>llama-4-scout-17b-16e-instruct</code></td>
+<td>30 RPM · 1K RPD · 30K TPM · 500K TPD</td>
+<td>Sufficient for all testing</td>
+</tr>
+<tr>
+<td><strong>Groq</strong></td>
+<td><code>whisper-large-v3-turbo</code></td>
+<td>20 RPM · 2K RPD</td>
+<td>~33 hours of audio/day</td>
 </tr>
 <tr>
 <td><strong>Deepgram</strong></td>
-<td>Initial credits</td>
-<td>✅ Quality testing</td>
+<td>Nova-3 + Aura-2</td>
+<td>$200 USD initial credit</td>
+<td>No credit card required</td>
 </tr>
 <tr>
 <td><strong>Edge TTS</strong></td>
+<td>Microsoft Edge</td>
 <td>No known limit</td>
-<td>✅ Unlimited use</td>
+<td>Unlimited use</td>
 </tr>
 <tr>
 <td><strong>Google Cloud</strong></td>
-<td>$300 initial credit</td>
-<td>⚠️ Monitored consumption</td>
+<td>Alternative STT</td>
+<td>$300 USD initial credit</td>
+<td>Monitored consumption</td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="sec-08-3-apis-costs-if-free-tier-is-exceeded">Costs if Free Tier is Exceeded</h3>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>Service</th>
+<th>Model</th>
+<th>Estimated Cost</th>
+</tr>
+</thead>
+<tr>
+<td><strong>Deepgram STT</strong></td>
+<td>Nova-3 (streaming)</td>
+<td>$0.0048/min of audio</td>
+</tr>
+<tr>
+<td><strong>Deepgram TTS</strong></td>
+<td>Aura-2</td>
+<td>$0.030/1K characters</td>
+</tr>
+<tr>
+<td><strong>Groq</strong></td>
+<td>Pay-as-you-go</td>
+<td>Requires Developer plan (prices not public per model)</td>
+</tr>
+</tbody>
+</table></div>
+<div class="highlight">
+
+The project operated entirely within free tiers. <strong>No API incurred real costs.</strong> If scaled to production, estimated costs would be minimal for the expected usage volume (~$0.005 per typical STT + LLM + TTS combined query).
+
+</div>
+<h2 id="sec-08-3-apis-tokenization-and-consumption">Tokenization and Consumption</h2>
+<p>The YAML classifier (first stage) <strong>consumes no tokens</strong>. The second stage (LLM with Tool Calling) does consume Groq tokens, but within the free tier there is no cost. Typical consumption per query:</p>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>Component</th>
+<th>Average Tokens</th>
+<th>Free Tier Cost</th>
+</tr>
+</thead>
+<tr>
+<td>YAML Classifier</td>
+<td>0</td>
+<td>$0</td>
+</tr>
+<tr>
+<td>LLM (Llama 4 Scout)</td>
+<td>~150-300 tokens</td>
+<td>$0 (free tier 500K TPD)</td>
+</tr>
+<tr>
+<td>STT (Whisper)</td>
+<td>N/A (audio)</td>
+<td>$0 (free tier 2K RPD)</td>
+</tr>
+<tr>
+<td>TTS (Edge/Deepgram)</td>
+<td>N/A (audio)</td>
+<td>$0 (unlimited / credit)</td>
 </tr>
 </tbody>
 </table></div>
@@ -5462,6 +5595,7 @@ MCP_TOKEN=your_token_here</code></pre>
 
 <footer class="site-footer">
   <p>&copy; 2026 <a href="https://ibero.mx" target="_blank" rel="noopener">Universidad Iberoamericana</a> · Mechatronics Engineering and Cyber-Physical Systems · All rights reserved.</p>
+  <p style="margin-top: 0.5rem;"><a href="https://adr1anbaz.github.io/prospectivaTecno/" target="_blank" rel="noopener">Technological Foresight Practices</a> — Previous practice repository.</p>
 </footer>
 
 <script>
