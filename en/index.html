@@ -454,6 +454,24 @@ body {
     color: #666;
 }
 
+/* ── Video embeds ── */
+.video-wrapper {
+    position: relative;
+    padding-bottom: 56.25%;
+    height: 0;
+    overflow: hidden;
+    margin: 1.5rem 0;
+    border-radius: 8px;
+}
+
+.video-wrapper iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
 /* ── Special boxes ── */
 .highlight {
     background: #fff8e1;
@@ -3436,6 +3454,16 @@ Last query: food
 
 <strong>Deterministic, non-reactive navigation</strong>: Navigation follows predefined routes using odometry (odometric and time modes). The Go2's 360° LiDAR and depth camera are available but <strong>not used for obstacle avoidance</strong> in the current configuration. The route is correct, but <strong>it has no automatic correction</strong> — if there is an unexpected obstacle, the robot does not detect or evade it. This functionality remains as future work (see <a href="/docs/07-futuro/" target="_blank" rel="noopener">Chapter 7</a>).
 </div>
+<h2 id="sec-04-6-rutas-video-demonstration-navigation-routes">Video Demonstration — Navigation Routes</h2>
+<p>The following videos show the robot executing predefined routes through the voice agent:</p>
+<h3 id="sec-04-6-rutas-route-laboratory-la-karpa">Route: Laboratory → La Karpa</h3>
+<div class="video-wrapper">
+  <iframe width="560" height="315" src="https://www.youtube.com/embed/mggsKZGpF_U" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+</div>
+<h3 id="sec-04-6-rutas-route-laboratory-giornale">Route: Laboratory → Giornale</h3>
+<div class="video-wrapper">
+  <iframe width="560" height="315" src="https://www.youtube.com/embed/9axaI-9eesg" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+</div>
 <h2 id="sec-04-6-rutas-note-on-navigation-testing">Note on Navigation Testing</h2>
 <div class="highlight">
 
@@ -3673,6 +3701,11 @@ Last query: food
 </tr>
 </tbody>
 </table></div>
+<h2 id="sec-04-7-comandos-video-demonstration-voice-commands">Video Demonstration — Voice Commands</h2>
+<p>The following video shows the execution of tricks and preprogrammed robot commands through voice commands:</p>
+<div class="video-wrapper">
+  <iframe width="560" height="315" src="https://www.youtube.com/embed/Iw1_JAIj4nI" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+</div>
 </div>
 </section>
 <section id="sec-04-8-mapeo" class="content-section">
